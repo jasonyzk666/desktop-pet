@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.spec
+
+# PyInstaller 构建产物
+build/
+dist/
+*.pkg
+
+# 部署包
+deploy.zip
+deploy_*.zip
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.bak
