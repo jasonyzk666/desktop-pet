@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pet-33t.pages.dev/sitemap.xml

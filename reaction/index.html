@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>极速反应 · 网页小游戏 · jasonyzk</title>
+<link rel="icon" type="image/png" href="/assets/icons/pet.png">
+<meta name="theme-color" content="#fbfbf9">
+<meta name="description" content="测一测你的反应速度：5 轮挑战，随机信号 + 假灯陷阱，手机电脑都能玩。">
+<link rel="canonical" href="https://pet-33t.pages.dev/reaction/">
+<link rel="apple-touch-icon" href="/assets/icons/pet.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="极速反应 · 网页小游戏">
+<meta property="og:description" content="5 轮反应力挑战，带假灯陷阱，测出你的真实手速。">
+<meta property="og:url" content="https://pet-33t.pages.dev/reaction/">
+<meta property="og:image" content="https://pet-33t.pages.dev/assets/icons/pet.png">
+<meta name="twitter:card" content="summary">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:auto}
+body{
+  background:var(--bg);color:var(--tx);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.topbar{
+  padding:22px 4vw 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:13px;
+}
+.topbar > span{margin-left:auto}
+.back{color:var(--tx2);transition:color .15s;display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;margin:-7px -9px;border-radius:10px}
+.back:hover{color:var(--tx)}
+
+.wrap{max-width:760px;margin:0 auto;padding:26px 4vw 60px}
+h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
+.lead{margin-top:10px;color:var(--tx2);font-size:15px;line-height:1.8}
+
+/* ===== 反应区 ===== */
+.arena{
+  margin-top:26px;width:100%;min-height:300px;border-radius:20px;
+  border:2px solid var(--line);background:var(--surface);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  text-align:center;padding:26px 18px;cursor:pointer;user-select:none;
+  touch-action:manipulation;
+  transition:background .12s linear,border-color .12s linear,transform .12s ease;
+}
+.arena:active{transform:scale(.995)}
+.arena .big{font-size:clamp(34px,8vw,58px);font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.arena .tip{font-size:14.5px;color:var(--tx2);line-height:1.7;max-width:30em}
+.arena .hint{font-size:12.5px;color:var(--tx3);font-family:var(--mono)}
+.arena.s-idle{border-color:var(--accent)}
+.arena.s-idle .big{color:var(--accent)}
+.arena.s-wait{background:var(--red-l);border-color:var(--red-b)}
+.arena.s-wait .big{color:var(--red-ink)}
+.arena.s-fake{background:var(--amber-l);border-color:var(--amber-b)}
+.arena.s-fake .big{color:var(--amber)}
+.arena.s-go{background:var(--green-l);border-color:var(--green-b)}
+.arena.s-go .big{color:var(--green)}
+.arena.s-done{background:var(--surface2)}
+.arena.s-done .big{color:var(--tx)}
+.arena .flash{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--tx2)}
+
+/* ===== 数据条 ===== */
+.stats{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
+.stat b{display:block;font-size:clamp(18px,4.4vw,24px);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.stat span{display:block;margin-top:4px;font-size:12px;color:var(--tx3)}
+.stat.best b{color:var(--accent)}
+
+/* ===== 按钮 ===== */
+.bar{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  padding:12px 24px;border-radius:99px;border:1px solid var(--line);
+  background:var(--surface);color:var(--tx);min-height:46px;
+  transition:transform .15s,border-color .15s,box-shadow .15s,background .15s;
+}
+.btn:hover{border-color:var(--tx3);box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.muted{color:var(--tx2);font-weight:500;padding:12px 18px}
+
+/* ===== 轮次记录 ===== */
+.rounds{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;min-height:34px}
+.round{
+  font-family:var(--mono);font-size:13px;padding:7px 14px;border-radius:99px;
+  background:var(--surface2);color:var(--tx2);border:1px solid var(--line);
+}
+.round.pen{background:var(--red-l);color:var(--red-ink);border-color:var(--red-b)}
+.round.ok{background:var(--green-l);color:var(--green);border-color:var(--green-b)}
+.verdict{margin-top:18px;font-size:16px;font-weight:700;letter-spacing:.5px;min-height:26px}
+.verdict small{display:block;margin-top:6px;font-weight:400;font-size:13.5px;color:var(--tx2);letter-spacing:0}
+
+.rules{
+  margin-top:30px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;
+}
+.rules h2{font-size:16px;margin-bottom:10px}
+.rules li{font-size:14px;color:var(--tx2);line-height:1.9;margin-left:18px}
+
+@media(max-width:560px){
+  .topbar{padding:16px 4vw 0}
+  .wrap{padding:20px 4vw 48px}
+  .arena{min-height:250px;border-radius:16px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .btn{flex:1 1 auto;min-width:120px}
+  .rules{padding:16px 18px}
+}
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+
+<div class="topbar" data-theme-slot>
+  <a class="back" href="../">← 返回主站</a>
+  <span style="color:var(--tx3)">Web Game · 反应力</span>
+</div>
+
+<div class="wrap">
+  <h1>极速反应</h1>
+  <p class="lead">屏幕变绿就点下去——但小心黄色假灯。5 轮之后，看看你到底有多快。</p>
+
+  <div class="arena s-idle" id="arena" role="button" tabindex="0"
+       aria-label="反应区：等待信号后点击或按空格">
+    <div class="big" id="big">准备好了吗</div>
+    <div class="tip" id="tip">点击这里或按空格开始</div>
+    <div class="hint" id="hint">鼠标 · 触摸 · 空格 都可以</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="sRound">0/5</b><span>轮次</span></div>
+    <div class="stat"><b id="sLast">—</b><span>本轮</span></div>
+    <div class="stat"><b id="sAvg">—</b><span>平均</span></div>
+    <div class="stat best"><b id="sBest">—</b><span>最佳（平均）</span></div>
+  </div>
+
+  <div class="bar">
+    <button class="btn primary" id="btnStart" type="button">开始挑战</button>
+    <button class="btn" id="btnAgain" type="button" hidden>再来一次</button>
+    <button class="btn muted" id="btnSound" type="button" aria-pressed="true">🔊 音效：开</button>
+    <button class="btn muted" id="btnClear" type="button">清除记录</button>
+  </div>
+
+  <div class="rounds" id="rounds" aria-live="polite"></div>
+  <div class="verdict" id="verdict" aria-live="polite"></div>
+
+  <div class="rules">
+    <h2>玩法</h2>
+    <ol>
+      <li>点「开始挑战」，屏幕会先变红——这时候别点，抢跑要重来。</li>
+      <li>屏幕变绿的瞬间立刻点下去，记录的就是你的反应时间。</li>
+      <li>第 3 轮起会出现黄色假灯，点中它要加罚 400 ms，看清再出手。</li>
+      <li>5 轮取平均，平均值越低手速越快。200 ms 以内已经超过大多数人。</li>
+    </ol>
+  </div>
+</div>
+
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+<script>
+(function(){
+  var TOTAL = 5, PENALTY = 400;
+  var arena = document.getElementById('arena');
+  var big   = document.getElementById('big');
+  var tip   = document.getElementById('tip');
+  var hint  = document.getElementById('hint');
+  var sRound= document.getElementById('sRound');
+  var sLast = document.getElementById('sLast');
+  var sAvg  = document.getElementById('sAvg');
+  var sBest = document.getElementById('sBest');
+  var rounds= document.getElementById('rounds');
+  var verdict=document.getElementById('verdict');
+  var btnStart=document.getElementById('btnStart');
+  var btnAgain=document.getElementById('btnAgain');
+  var btnSound=document.getElementById('btnSound');
+  var btnClear=document.getElementById('btnClear');
+
+  var KEY_BEST='jz-reaction-best', KEY_SOUND='jz-reaction-sound';
+  var state='idle';               // idle | wait | fake | go | done
+  var times=[], tGo=0, timer=null, fakeTimer=null;
+  var soundOn = true;
+  try{ if(localStorage.getItem(KEY_SOUND)==='0') soundOn=false; }catch(e){}
+
+  /* ---------- 音效（Web Audio，用户交互后才创建） ---------- */
+  var actx=null;
+  function beep(freq,dur,type){
+    if(!soundOn) return;
+    try{
+      if(!actx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; actx=new AC(); }
+      if(actx.state==='suspended') actx.resume();
+      var o=actx.createOscillator(), g=actx.createGain();
+      o.type=type||'sine'; o.frequency.value=freq;
+      g.gain.setValueAtTime(.0001,actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.22,actx.currentTime+.01);
+      g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime+dur+.02);
+    }catch(e){}
+  }
+
+  /* ---------- 记录 ---------- */
+  function getBest(){
+    try{ var v=parseInt(localStorage.getItem(KEY_BEST),10); return isNaN(v)?null:v; }catch(e){ return null; }
+  }
+  function setBest(v){ try{ localStorage.setItem(KEY_BEST,String(v)); }catch(e){} }
+  function paintBest(){
+    var b=getBest();
+    sBest.textContent = b==null ? '—' : b+' ms';
+  }
+
+  /* ---------- 界面 ---------- */
+  function setState(cls,bigTxt,tipTxt,hintTxt){
+    arena.className='arena '+cls;
+    big.textContent=bigTxt; tip.textContent=tipTxt; hint.textContent=hintTxt||'';
+  }
+  function resetRoundUI(){
+    rounds.innerHTML=''; verdict.innerHTML=''; times=[];
+    sRound.textContent='0/'+TOTAL; sLast.textContent='—'; sAvg.textContent='—';
+    btnAgain.hidden=true; btnStart.hidden=false; btnStart.textContent='开始挑战';
+  }
+
+  function clearTimers(){
+    if(timer){clearTimeout(timer);timer=null;}
+    if(fakeTimer){clearTimeout(fakeTimer);fakeTimer=null;}
+  }
+
+  /* ---------- 流程 ---------- */
+  function startChallenge(){
+    clearTimers(); resetRoundUI();
+    verdict.innerHTML='';
+    nextRound();
+  }
+
+  // 轮次以已记录的成绩数量为准，抢跑不占用轮次
+  function nextRound(){
+    if(times.length>=TOTAL){ finish(); return; }
+    sRound.textContent=(times.length+1)+'/'+TOTAL;
+    btnStart.hidden=true;
+    setState('s-wait','别急…','红色时点击算抢跑，等它变绿','第 '+(times.length+1)+' 轮');
+    var delay=1100+Math.random()*2600;
+    // 第 3 轮起有概率先闪一个黄色假灯
+    var useFake = (times.length>=2) && Math.random()<0.4;
+    timer=setTimeout(function(){
+      timer=null;
+      if(useFake){
+        state='fake';
+        setState('s-fake','假的！','别上当，等绿色','黄色是陷阱');
+        beep(320,.10,'square');
+        fakeTimer=setTimeout(showGo, 320+Math.random()*380);
+      }else{
+        showGo();
+      }
+    },delay);
+    state='wait';
+  }
+
+  function showGo(){
+    state='go'; tGo=performance.now();
+    setState('s-go','点！','','越快越好');
+    beep(880,.09,'sine');
+  }
+
+  function press(){
+    if(state==='idle'||state==='done'){   // 结束后点/按直接重开
+      startChallenge();
+      return;
+    }
+    if(state==='penalty'||state==='between'){ return; }  // 缓冲期忽略
+    if(state==='wait'){        // 抢跑：本轮不作数，重新等待
+      clearTimers();
+      beep(180,.22,'sawtooth');
+      setState('s-wait','抢跑了','红色时不能点，这一轮重来','稍等一下…');
+      state='penalty';
+      timer=setTimeout(function(){ timer=null; nextRound(); },1200);
+      return;
+    }
+    if(state==='fake'){        // 中招假灯
+      clearTimers();
+      beep(160,.26,'sawtooth');
+      record(PENALTY,true);
+      return;
+    }
+    if(state==='go'){          // 正常反应
+      clearTimers();
+      var ms=Math.round(performance.now()-tGo);
+      beep(1180,.07,'triangle');
+      record(ms,false);
+      return;
+    }
+  }
+
+  function record(ms,penal){
+    times.push(ms);
+    sLast.textContent = ms+' ms';
+    var chip=document.createElement('span');
+    chip.className='round '+(penal?'pen':'ok');
+    chip.textContent='第'+times.length+'轮 '+(penal?'+':'' )+ms+' ms'+(penal?' 假灯':'');
+    rounds.appendChild(chip);
+
+    var sum=0; for(var i=0;i<times.length;i++) sum+=times[i];
+    var avg=Math.round(sum/times.length);
+    sAvg.textContent=avg+' ms';
+
+    if(times.length>=TOTAL){ finish(); return; }
+    state='between';
+    setState('s-done', ms+' ms', penal?'被假灯骗到了，加罚 '+PENALTY+' ms':'下一轮准备…','第 '+(times.length+1)+' 轮马上开始');
+    timer=setTimeout(function(){ timer=null; nextRound(); }, 1200);
+  }
+
+  function finish(){
+    clearTimers();
+    state='done';
+    var sum=0; for(var i=0;i<times.length;i++) sum+=times[i];
+    var avg=Math.round(sum/times.length);
+    var txt,desc;
+    if(avg<=190){ txt='⚡ 闪电反射'; desc='平均 '+avg+' ms，这个速度已经能去打职业了。'; }
+    else if(avg<=240){ txt='🥇 相当出色'; desc='平均 '+avg+' ms，明显快于普通人。'; }
+    else if(avg<=300){ txt='👍 正常水平'; desc='平均 '+avg+' ms，中等偏上，再练几轮还能更快。'; }
+    else if(avg<=400){ txt='🐢 慢了半拍'; desc='平均 '+avg+' ms，多半是被假灯骗到了。'; }
+    else{ txt='😴 走神了吧'; desc='平均 '+avg+' ms，再来一次，这次盯紧绿色。'; }
+    verdict.innerHTML=txt+'<small>'+desc+'</small>';
+    setState('s-done', avg+' ms', '5 轮平均成绩', '点击这里或按空格再来一次');
+
+    var best=getBest();
+    if(best==null||avg<best){
+      setBest(avg); paintBest();
+      verdict.innerHTML=txt+'<small>'+desc+' 🎉 新纪录！</small>';
+    }
+    btnStart.hidden=true;
+    btnAgain.hidden=false;
+    beep(660,.12,'sine'); setTimeout(function(){beep(990,.14,'sine')},130);
+  }
+
+  /* ---------- 事件 ---------- */
+  // 不再 preventDefault：否则触屏时手指落在反应区上就滑不动页面
+  arena.addEventListener('pointerdown',function(){ press(); });
+  arena.addEventListener('keydown',function(e){
+    if(e.key===' '||e.key==='Enter'){
+      e.preventDefault();
+      e.stopPropagation();          // 关键：否则会冒泡到 document 触发第二次 press（空格开局即抢跑）
+      press();
+    }
+  });
+  function blur(b){ if(b && b.blur) b.blur(); }
+  btnStart.addEventListener('click',function(){ blur(btnStart); startChallenge(); });
+  btnAgain.addEventListener('click',function(){ blur(btnAgain); startChallenge(); });
+  btnSound.addEventListener('click',function(){
+    soundOn=!soundOn;
+    try{ localStorage.setItem(KEY_SOUND,soundOn?'1':'0'); }catch(e){}
+    btnSound.textContent = soundOn ? '🔊 音效：开' : '🔇 音效：关';
+    btnSound.setAttribute('aria-pressed',soundOn?'true':'false');
+    if(soundOn) beep(880,.08,'sine');
+  });
+  btnClear.addEventListener('click',function(){
+    try{ localStorage.removeItem(KEY_BEST); }catch(e){}
+    paintBest();
+    verdict.innerHTML='已清除最佳记录<small>再挑战一次就能刷新它</small>';
+  });
+
+  // 空格/回车也能触发（焦点不在按钮上时）
+  document.addEventListener('keydown',function(e){
+    if(e.key!==' '&&e.key!=='Enter') return;
+    var t=document.activeElement;
+    var tag=t?t.tagName:'';
+    if(tag==='BUTTON'||tag==='A'||tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return; // 让控件自己处理
+    e.preventDefault(); press();
+  });
+
+  btnSound.textContent = soundOn ? '🔊 音效：开' : '🔇 音效：关';
+  btnSound.setAttribute('aria-pressed',soundOn?'true':'false');
+  paintBest();
+})();
+</script>
+</body>
+</html>

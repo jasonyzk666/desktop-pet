@@ -1,0 +1,63 @@
+/* ===========================================================
+   全站交互动画层
+   - 点击/按压反馈（scale 用独立属性，不会覆盖元素自己的 transform）
+   - 点击处的涟漪扩散
+   - 滚动到可视区时依次浮现
+   全部尊重系统「减少动效」设置
+   =========================================================== */
+/* 键盘聚焦可见（不干扰鼠标点击）
+   注意：必须放在 prefers-reduced-motion 查询之外 ——
+   开了「减少动效」的用户同样需要看得见焦点在哪（WCAG 2.4.7） */
+a:focus-visible,button:focus-visible,[role="button"]:focus-visible,
+input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+  outline:2px solid rgba(68,56,202,.55);outline-offset:3px;border-radius:8px;
+}
+@media (prefers-reduced-motion: no-preference){
+
+  /* 可点击元素的过渡与按压反馈 */
+  a,button,[role="button"],input[type="submit"],label[onclick]{
+    transition:
+      color .18s ease,
+      background-color .18s ease,
+      border-color .18s ease,
+      box-shadow .22s ease,
+      opacity .2s ease,
+      scale .16s cubic-bezier(.2,.8,.3,1);
+  }
+  a:active,button:active,[role="button"]:active,
+  input[type="submit"]:active,label[onclick]:active{scale:.965}
+
+  /* 点击处涟漪 */
+  .ripple-dot{
+    position:fixed;z-index:9999;width:16px;height:16px;margin:-8px 0 0 -8px;
+    border-radius:50%;pointer-events:none;background:currentColor;
+    animation:rippleOut .5s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes rippleOut{
+    from{scale:1;opacity:.32}
+    to{scale:9;opacity:0}
+  }
+
+  /* 滚动浮现（JS 加上 .m-in 后播放） */
+  html.motion [data-reveal]{opacity:0;translate:0 26px}
+  html.motion [data-reveal].m-in{
+    opacity:1;translate:0 0;
+    transition:opacity .62s cubic-bezier(.2,.7,.3,1),translate .62s cubic-bezier(.2,.7,.3,1);
+  }
+}
+
+/* ===========================================================
+   老浏览器回退：不支持独立 transform 属性（scale / translate）时
+   改用传统 transform，保证动效不失效
+   =========================================================== */
+@supports not (scale: 1){
+  a:active,button:active,[role="button"]:active,
+  input[type="submit"]:active,label[onclick]:active{transform:scale(.965)}
+}
+@supports not (translate: 0 26px){
+  html.motion [data-reveal]{opacity:1;transform:none}
+}
+/* 不支持 :focus-visible 的老浏览器：保留默认焦点环 */
+@supports not selector(:focus-visible){
+  a:focus,button:focus,[role="button"]:focus{outline:2px solid rgba(68,56,202,.55);outline-offset:3px}
+}

@@ -1,576 +1,363 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>桌面宠物</title>
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>jasonyzk · 在线工具站</title>
+<meta name="description" content="jasonyzk 的作品与工具集合：桌面宠物、安卓工具、网页演示，以及极速反应、贪吃蛇两个网页小游戏。">
+<meta name="theme-color" content="#fbfbf9">
+<link rel="canonical" href="https://pet-33t.pages.dev/">
+<link rel="icon" type="image/png" href="/assets/icons/pet.png">
+<link rel="apple-touch-icon" href="/assets/icons/pet.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="jasonyzk · 在线工具站">
+<meta property="og:description" content="桌面宠物、安卓工具、网页演示，还有极速反应与贪吃蛇两个网页小游戏。">
+<meta property="og:url" content="https://pet-33t.pages.dev/">
+<meta property="og:image" content="https://pet-33t.pages.dev/assets/icons/pet.png">
+<meta name="twitter:card" content="summary">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:auto}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: #0a0a0f;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 60px 20px;
-    min-height: 100vh;
-  }
+/* ===== 第一屏：欢迎 ===== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;position:relative;
+  padding:26px 34px 40px;
+}
+/* 固定定位：翻到第二屏后时间与开关依然可见可点（层级高于弹窗遮罩） */
+.pills{position:fixed;top:30px;right:34px;display:flex;gap:14px;z-index:1200}
+.pill{
+  border:1.5px solid var(--accent);border-radius:99px;color:var(--accent);
+  font-size:16px;font-weight:600;padding:10px 22px;min-width:92px;text-align:center;
+  font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.5px;
+}
+#p-time{min-width:118px}
+#p-week{min-width:88px}
+#p-date{min-width:104px}
+.hero-main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 6vw}
+.hero h1{font-size:clamp(50px,8vw,92px);font-weight:700;line-height:1.28;letter-spacing:1px}
+.hero h2{font-size:clamp(42px,6.8vw,78px);font-weight:700;line-height:1.28;margin-top:12px}
 
-  .avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    border: 2px solid rgba(255,255,255,0.1);
-  }
+.down{
+  align-self:center;display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin-bottom:8px;cursor:pointer;border:none;background:none;color:var(--accent);
+}
+.down svg{width:22px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.hero{cursor:grab}
+body.dragging,body.dragging *{cursor:grabbing !important;user-select:none}
+.down{user-select:none}
+.down span{font-size:11.5px;letter-spacing:1px}
+@media (prefers-reduced-motion: no-preference){
+  .down svg{animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+}
 
-  .name {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    letter-spacing: 1px;
-  }
+/* ===== 第二屏：项目一览 ===== */
+.tools{
+  min-height:100vh;padding:110px 6vw 110px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.tools-title{
+  max-width:980px;margin:0 auto 40px;width:100%;text-align:center;
+  font-size:clamp(30px,4.6vw,54px);font-weight:700;letter-spacing:4px;
+}
+.tools-title small{
+  display:block;margin-top:10px;font-size:14px;font-weight:400;
+  letter-spacing:1px;color:var(--tx3);
+}
+.grid{
+  max-width:980px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:26px;
+}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:16px;
+  padding:40px 24px 32px;text-align:center;
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+}
+.card:hover{transform:translateY(-4px);border-color:var(--tx3);box-shadow:var(--shadow)}
+.card .ic{
+  width:76px;height:76px;margin:0 auto 20px;border-radius:19px;
+  display:flex;align-items:center;justify-content:center;
+}
+.card .ic img{width:58px;height:58px;object-fit:contain;border-radius:13px}
+.card .ic svg{width:38px;height:38px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-size:19px;font-weight:700;margin-bottom:10px}
+.card p{font-size:14px;line-height:1.8;color:var(--tx2);padding:0 4px;max-width:24em;margin:0 auto}
+.ic-blue{background:var(--ic-blue)}
+.ic-purple{background:var(--ic-purple)}
+.ic-green{background:var(--ic-green)}
+.ic-amber{background:var(--ic-amber)}
+.ic-rose{background:var(--ic-rose)}
 
-  .bio {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 8px;
-    text-align: center;
-  }
+/* 进入工具屏时卡片依次浮出（用 translate 属性，避开与 hover 的 transform 冲突） */
+@media (prefers-reduced-motion: no-preference){
+  .card{opacity:0;translate:0 20px;transition:opacity .5s ease,translate .5s ease,box-shadow .18s,border-color .18s}
+  .card.in{opacity:1;translate:0 0}
+}
 
-  .version {
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-  }
-
-  .tags {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 36px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .tag {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #aaa;
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 20px;
-  }
-
-  .links {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .link-btn {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #141418;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 16px 20px;
-    border-radius: 14px;
-    color: #e8e8e8;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    cursor: pointer;
-  }
-
-  .link-btn:hover {
-    background: #1e1e24;
-    border-color: rgba(255,255,255,0.18);
-    transform: translateY(-2px);
-  }
-
-  .link-btn.btn-click {
-    cursor: pointer;
-  }
-
-  .link-icon {
-    width: 22px;
-    height: 22px;
-    opacity: 0.7;
-    flex-shrink: 0;
-  }
-
-  .link-text { flex: 1; }
-  .link-arrow { opacity: 0.3; font-size: 14px; }
-
-  /* Download modal — 4 列表 */
-  .dl-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .dl-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #0a0a0f;
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 14px 18px;
-    border-radius: 12px;
-    color: #e8e8e8;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-
-  .dl-item:hover {
-    background: #1e1e24;
-    border-color: rgba(255,255,255,0.18);
-    transform: translateY(-2px);
-  }
-
-  .dl-item.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .dl-item.disabled:hover {
-    transform: none;
-    background: #0a0a0f;
-    border-color: rgba(255,255,255,0.08);
-  }
-
-  .dl-icon {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    color: #fff;
-  }
-
-  .dl-icon.baidu  { background: #3385ff; }
-  .dl-icon.quark  { background: #0a8aff; }
-  .dl-icon.xunlei { background: #f0c419; color: #1a1a1a; }
-  .dl-icon.local  { background: linear-gradient(135deg, #ff8c42, #ff6b1a); }
-
-  .dl-text { flex: 1; }
-  .dl-sub { font-size: 11px; color: #666; margin-top: 2px; }
-
-  /* Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
-
-  .modal-overlay.active {
-    display: flex;
-  }
-
-  .modal {
-    background: #141418;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 18px;
-    width: 100%;
-    max-width: 540px;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 28px;
-  }
-
-  /* 自定义深色滚动条 */
-  .modal::-webkit-scrollbar { width: 8px; }
-  .modal::-webkit-scrollbar-track { background: transparent; }
-  .modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
-  .modal::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-  .modal { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
-
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-
-  .modal-title {
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  .modal-close {
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 22px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: color 0.2s;
-  }
-
-  .modal-close:hover {
-    color: #fff;
-  }
-
-  .changelog-item {
-    margin-bottom: 22px;
-  }
-
-  .changelog-item:last-child {
-    margin-bottom: 0;
-  }
-
-  .changelog-version {
-    font-size: 14px;
-    font-weight: 700;
-    color: #ff8c42;
-    margin-bottom: 6px;
-  }
-
-  .changelog-list {
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .changelog-list li {
-    font-size: 13px;
-    color: #999;
-    padding: 4px 0;
-    padding-left: 16px;
-    position: relative;
-    line-height: 1.6;
-  }
-
-  .changelog-list li::before {
-    content: "•";
-    position: absolute;
-    left: 0;
-    color: #444;
-  }
-
-  /* Contact modal 列表 */
-  .contact-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #0a0a0f;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 14px 16px;
-    color: #e8e8e8;
-    text-decoration: none;
-    font-size: 14px;
-    transition: all 0.2s ease;
-  }
-  .contact-item:hover {
-    background: #141418;
-    border-color: rgba(255,255,255,0.18);
-    transform: translateY(-1px);
-  }
-  .contact-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.05);
-    flex-shrink: 0;
-  }
-  .contact-icon svg { width: 18px; height: 18px; opacity: 0.8; }
-  .contact-info { flex: 1; }
-  .contact-label { font-size: 12px; color: #777; margin-bottom: 2px; }
-  .contact-value { font-size: 14px; color: #e8e8e8; font-weight: 500; word-break: break-all; }
-
-  @media (max-width: 480px) {
-    body { padding: 48px 16px; }
-    .name { font-size: 20px; }
-    .modal { padding: 20px; }
-  }
+@media(max-width:640px){
+  .hero{padding:20px 20px 32px}
+  .pills{top:20px;right:20px;gap:8px}
+  .pill{padding:6px 13px;font-size:13.5px}
+  #p-time{min-width:92px;font-size:12.5px}
+  #p-week{min-width:70px}
+  #p-date{min-width:84px}
+  .hero-main{padding:0 4px}
+  .tools{padding:90px 6vw 80px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .card{padding:28px 16px 24px}
+  .card .ic{width:60px;height:60px;border-radius:15px;margin-bottom:16px}
+  .card .ic img{width:46px;height:46px}
+  .card .ic svg{width:30px;height:30px}
+  .card h3{font-size:16px}
+  .card p{font-size:12.5px;line-height:1.7}
+  .tools-title{margin-bottom:28px;letter-spacing:2px}
+  .tools-title small{font-size:12.5px}
+}
+/* 超小屏（≤370px）：三胶囊+开关放不下，隐藏日期、压缩尺寸 */
+@media(max-width:370px){
+  .pills{top:14px;right:12px;gap:6px}
+  .pill{padding:5px 10px;font-size:12px}
+  #p-time{min-width:78px;font-size:11.5px}
+  #p-week{min-width:54px}
+  #p-date{display:none}
+  .pills .ttoggle{width:30px;height:30px}
+  .pills .ttoggle svg{width:15px;height:15px}
+}
 </style>
+<link rel="stylesheet" href="assets/motion.css?v=20261103">
+<link rel="stylesheet" href="assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="assets/glass.css?v=20261103">
 </head>
 <body>
 
-  <img class="avatar" src="assets/app_icon.png" alt="桌面宠物" onerror="this.onerror=null;this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=pet&backgroundColor=1a1a2e';">
-  <div class="name">桌面宠物</div>
-  <div class="bio">让可爱的小宠物陪你度过每一个工作日</div>
-  <div class="version">v1.0.3</div>
-  <div class="tags">
-    <span class="tag">Windows</span>
-    <span class="tag">Python</span>
-    <span class="tag">开源</span>
-    <span class="tag">轻量</span>
+<!-- 第一屏（时间与主题开关放在 body 下：hero 有 backdrop-filter，会成为 fixed 的包含块） -->
+<section class="hero">
+  <div class="hero-main">
+    <h1 id="greet">你好</h1>
+    <h2>欢迎来到jasonyzk!</h2>
   </div>
 
-  <div class="links">
-    <a class="link-btn" href="/download">
-      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      <span class="link-text">下载地址</span>
-      <span class="link-arrow">→</span>
+  <button class="down" id="down" aria-label="下滑进入工具站">
+    <svg viewBox="0 0 22 30"><path d="M11 2v20M3.5 15.5 11 23l7.5-7.5"/></svg>
+    <span>下滑进入</span>
+  </button>
+</section>
+
+<!-- 时间 / 星期 / 日期 / 主题开关：固定在右上角，两屏都可见 -->
+<div class="pills">
+  <span class="pill" id="p-time">--:--:--</span>
+  <span class="pill" id="p-week">--</span>
+  <span class="pill" id="p-date">--</span>
+</div>
+
+<!-- 第二屏：项目一览 -->
+<section class="tools" id="tools">
+  <h2 class="tools-title" data-reveal>项目一览<small>PROJECTS</small></h2>
+  <div class="grid">
+
+    <a class="card" data-reveal data-delay="90" href="pet/">
+      <span class="ic ic-blue">
+        <svg viewBox="0 0 24 24" stroke="#2563eb" aria-hidden="true">
+          <path d="M5.9 9.9 4.6 4.2l5.8 3.4"/>
+          <path d="M18.1 9.9 19.4 4.2l-5.8 3.4"/>
+          <path d="M12 21c-4.4 0-7.8-3.1-7.8-6.9 0-3.9 3.5-7 7.8-7s7.8 3.1 7.8 7c0 3.8-3.4 6.9-7.8 6.9z"/>
+          <path d="M9.1 12.9v1.8"/>
+          <path d="M14.9 12.9v1.8"/>
+          <path d="M10.5 16.4c.6.7 1 .9 1.5.9s.9-.2 1.5-.9"/>
+          <path d="M4.3 15.2 1.7 14.6"/>
+          <path d="M5.2 17.5 1.9 18.4"/>
+          <path d="M19.7 15.2 22.3 14.6"/>
+          <path d="M18.8 17.5 22.1 18.4"/>
+        </svg>
+      </span>
+      <h3>桌面宠物</h3>
+      <p>写实人像桌面宠物，会自己走动、跟随鼠标、右键菜单喂饭，支持双屏与明暗主题。下载暂未开放，源码已开源。</p>
     </a>
-    <a class="link-btn" href="javascript:void(0);" id="changelogBtn">
-      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-        <polyline points="10 9 9 9 8 9"/>
-      </svg>
-      <span class="link-text">更新日志</span>
-      <span class="link-arrow">→</span>
+
+    <a class="card" data-reveal data-delay="180" href="recorder/">
+      <span class="ic ic-purple">
+        <svg viewBox="0 0 24 24" stroke="#7c5cf0"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="18" r="1.3"/></svg>
+      </span>
+      <h3>操作录制</h3>
+      <p>安卓悬浮窗连招工具，录制触屏手势后可循环回放。基于 Accessibility Service 实现，免 Root，不改动系统。</p>
     </a>
-    <a class="link-btn" href="javascript:void(0);" id="contactBtn">
-      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-        <polyline points="22,6 12,13 2,6"/>
-      </svg>
-      <span class="link-text">联系作者</span>
-      <span class="link-arrow">→</span>
+
+    <a class="card" data-reveal data-delay="270" href="seo/">
+      <span class="ic ic-green">
+        <svg viewBox="0 0 24 24" stroke="#22a559"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      </span>
+      <h3>搜索引擎原理</h3>
+      <p>面向初一学生的信息技术教学演示，把爬虫抓取、建立索引到结果排序的整个过程一步步讲清楚。</p>
     </a>
+
+    <a class="card" data-reveal data-delay="90" href="reaction/">
+      <span class="ic ic-amber">
+        <svg viewBox="0 0 24 24" stroke="#b45309" aria-hidden="true">
+          <path d="M13.5 2 5 13.5h5.2L9.4 22 18 10.5h-5.2z"/>
+        </svg>
+      </span>
+      <h3>极速反应</h3>
+      <p>网页小游戏：屏幕变绿就出手，5 轮测出真实反应速度。第 3 轮起还有黄色假灯陷阱，最高纪录保存在本地。</p>
+    </a>
+
+    <a class="card" data-reveal data-delay="180" href="snake/">
+      <span class="ic ic-rose">
+        <svg viewBox="0 0 24 24" stroke="#be123c" aria-hidden="true">
+          <path d="M4 17.5c0-2.5 2-3.5 4-3.5s3-1.5 3-3.5-1.5-3.5-3.5-3.5S4 8.5 4 6.5"/>
+          <path d="M11 17.5h6"/>
+          <path d="M17 17.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 1 0 0-5"/>
+          <circle cx="18.6" cy="9.6" r=".9" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
+      <h3>贪吃蛇</h3>
+      <p>经典街机重制：方向键或手指滑动都能玩，吃满屏拿金豆，还能开穿墙模式。画面跟随深浅主题自动变色。</p>
+    </a>
+
   </div>
+</section>
 
+<script>
+// 右上角：时间 / 星期几 / 日期
+var WEEK=['日','一','二','三','四','五','六'];
+function tick(){
+  var d=new Date(),p=function(n){return n<10?'0'+n:n};
+  document.getElementById('p-time').textContent=p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  document.getElementById('p-week').textContent='星期'+WEEK[d.getDay()];
+  document.getElementById('p-date').textContent=(d.getMonth()+1)+'月'+d.getDate()+'日';
+  var h=d.getHours();
+  document.getElementById('greet').textContent=h<6?'夜深了':h<12?'早上好':h<14?'中午好':h<18?'下午好':'晚上好';
+}
+tick();setInterval(tick,1000);
 
-  <!-- Changelog Modal -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">更新日志</span>
-        <button class="modal-close" id="modalClose">✕</button>
-      </div>
-      <div id="changelogContent"></div>
-    </div>
-  </div>
+// 翻页：双向、缓动、速度可调（不用 scrollIntoView，那个快慢改不了）
+(function(){
+  var hero=document.querySelector('.hero'), tools=document.getElementById('tools');
+  var DUR=900;                                  // 单屏滑动时长（毫秒）
+  var slow=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var animating=false, raf=null;
 
-  <!-- Contact Modal -->
-  <div class="modal-overlay" id="contactOverlay">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">联系作者</span>
-        <button class="modal-close" id="contactClose">✕</button>
-      </div>
-      <div class="contact-list">
-        <a class="contact-item" href="mailto:1583398311@163.com">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-              <polyline points="22,6 12,13 2,6"/>
-            </svg>
-          </div>
-          <div class="contact-info">
-            <div class="contact-label">邮箱</div>
-            <div class="contact-value">1583398311@163.com</div>
-          </div>
-        </a>
-        <a class="contact-item" href="javascript:void(0);" id="contactQQ" title="点击复制 QQ 号">
-          <div class="contact-icon">
-            <svg viewBox="0 0 448 512" fill="currentColor">
-              <path d="M433.754 420.445c-11.526 1.393-44.86-52.741-44.86-52.741 0 31.345-16.136 72.247-51.051 101.786 16.039 23.554 19.944 46.953 6.191 67.423-13.755 20.474-36.757 24.029-53.576 24.029-25.895 0-42.372-10.24-49.497-24.029-3.844-7.458-4.644-15.473-4.644-22.871 0-8.072 2.126-16.299 5.764-23.535-27.886 11.496-60.186 11.496-88.071 0 3.638 7.236 5.764 15.464 5.764 23.535 0 7.398-.8 15.413-4.644 22.871-7.124 13.789-23.601 24.029-49.496 24.029-16.82 0-39.822-3.555-53.577-24.029-13.752-20.47-9.848-43.868 6.19-67.423-34.915-29.539-51.05-70.441-51.05-101.786 0 0-33.334 54.134-44.859 52.741 0 0-3.943-2.508-3.943-6.172 0-1.965.395-3.961 1.573-6.205 1.574-2.996 8.182-7.528 15.12-11.337 13.544-7.434 33.09-13.392 44.21-17.85 8.226-3.303 8.226-8.951 8.226-8.951s-3.691-4.659-5.63-9.795c-3.464-9.19-3.975-26.055 1.431-41.895 3.218-9.443 8.311-15.938 13.348-20.141 0-9.138 1.966-26.458 11.115-36.472 8.909-9.748 22.722-13.557 37.047-13.557 5.056 0 10.373.742 15.538 2.174 10.159-11.051 22.985-15.711 38.018-15.711 15.032 0 27.858 4.66 38.018 15.711 5.165-1.432 10.482-2.174 15.537-2.174 14.326 0 28.139 3.809 37.048 13.557 9.149 10.014 11.114 27.334 11.114 36.472 5.037 4.203 10.13 10.698 13.349 20.141 5.406 15.84 4.894 32.705 1.43 41.895-1.938 5.136-5.629 9.795-5.629 9.795s0 5.648 8.226 8.951c11.12 4.458 30.666 10.416 44.21 17.85 6.938 3.809 13.546 8.341 15.12 11.337 1.178 2.244 1.572 4.24 1.572 6.205 0 3.664-3.942 6.172-3.942 6.172z"/>
-            </svg>
-          </div>
-          <div class="contact-info">
-            <div class="contact-label">QQ</div>
-            <div class="contact-value" id="contactQQValue">3821888622（点击复制）</div>
-          </div>
-        </a>
-        <a class="contact-item" href="https://github.com/jasonyzk666/desktop-pet/issues" target="_blank" rel="noopener">
-          <div class="contact-icon">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.3 3.5 1 .11-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-          </div>
-          <div class="contact-info">
-            <div class="contact-label">GitHub</div>
-            <div class="contact-value">@jasonyzk666</div>
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
+  function topOf(el){ return el.getBoundingClientRect().top + (window.pageYOffset||0); }
 
-  <script>
-    const changelog = [
-      {
-        version: "v1.0.3",
-        date: "",
-        changes: [
-          "新增软件图标与托盘图标"
-        ]
-      },
-      {
-        version: "v1.0.2",
-        date: "",
-        changes: [
-          "修复右键菜单重复项"
-        ]
-      },
-      {
-        version: "v1.0.1",
-        date: "",
-        changes: [
-          "修复浅色模式下文字颜色异常"
-        ]
-      },
-      {
-        version: "v1.0.0",
-        date: "",
-        changes: [
-          "新增微软风格右键菜单",
-          "新增设置窗口（走动/停止、跟随、暂停、点击穿透等）",
-          "新增明暗主题切换，跟随系统主题"
-        ]
-      },
-      {
-        version: "v0.9.0",
-        date: "",
-        changes: [
-          "更换眼镜样式"
-        ]
-      },
-      {
-        version: "v0.8.0",
-        date: "",
-        changes: [
-          "跟随模式下宠物追到目标后停止移动",
-          "跟随时近距自动减速",
-          "新增左键拖拽宠物",
-          "拖拽时禁用跟随移动",
-          "喂饭按钮在走动/拖拽时禁用"
-        ]
-      },
-      {
-        version: "v0.7.0",
-        date: "",
-        changes: [
-          "修复动画帧重复问题",
-          "修复窗口尺寸变化后动画不更新"
-        ]
-      },
-      {
-        version: "v0.6.0",
-        date: "",
-        changes: [
-          "新增双显示器支持，宠物可在多屏间自由移动"
-        ]
-      },
-      {
-        version: "v0.5.0",
-        date: "",
-        changes: [
-          "新增跟随鼠标模式，多宠物在光标周围环形排列"
-        ]
-      },
-      {
-        version: "v0.4.0",
-        date: "",
-        changes: [
-          "修复聚拢/分散按钮失效",
-          "宠物静止时自动慢速游走",
-          "头发缩短",
-          "修复走到边缘前就转身的问题"
-        ]
-      },
-      {
-        version: "v0.3.0",
-        date: "",
-        changes: [
-          "识别窗口边缘为障碍物"
-        ]
-      },
-      {
-        version: "v0.2.0",
-        date: "",
-        changes: [
-          "修复走路动画抽搐问题"
-        ]
-      },
-      {
-        version: "v0.1.0",
-        date: "",
-        changes: [
-          "写实人像桌面宠物登场"
-        ]
-      },
-      {
-        version: "v0.0.0",
-        date: "",
-        changes: [
-          "初版发布"
-        ]
-      }
-    ];
+  function go(dir){
+    if(animating) return;
+    var y=window.pageYOffset, toolsTop=topOf(tools), maxY=document.documentElement.scrollHeight-window.innerHeight;
+    var to=null;
+    if(dir>0){ if(y < toolsTop-2) to=Math.min(toolsTop,maxY); }          // 往下：去工具屏
+    else     { if(y > 2)          to=(y<=toolsTop+2)?0:toolsTop; }       // 往上：回上一屏
+    if(to===null || Math.abs(to-y)<2) return;
 
-    const content = document.getElementById('changelogContent');
-    content.innerHTML = changelog.map(item => `
-      <div class="changelog-item">
-        <div class="changelog-version">${item.version}</div>
-        <ul class="changelog-list">
-          ${item.changes.map(c => `<li>${c}</li>`).join('')}
-        </ul>
-      </div>
-    `).join('');
+    var from=y, start=null, dur=slow?0:DUR;
+    animating=true;
+    function step(now){
+      if(start===null) start=now;
+      var t=dur?Math.min(1,(now-start)/dur):1;
+      var e=t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;                     // easeInOutCubic
+      window.scrollTo(0, Math.round(from+(to-from)*e));
+      if(t<1) raf=requestAnimationFrame(step);
+      else { animating=false; }
+    }
+    raf=requestAnimationFrame(step);
+  }
 
-    const overlay = document.getElementById('modalOverlay');
-    const btn = document.getElementById('changelogBtn');
-    const closeBtn = document.getElementById('modalClose');
+  function absorb(){ return animating; }
 
-    btn.addEventListener('click', () => overlay.classList.add('active'));
-    closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) overlay.classList.remove('active');
-    });
+  // 滚轮（含触控板）：双向，动画期间吞掉后续滚动
+  window.addEventListener('wheel',function(e){
+    if(Math.abs(e.deltaY)<4) return;
+    if(absorb()){ e.preventDefault(); return; }
+    var y=window.pageYOffset, toolsTop=topOf(tools);
+    var down=e.deltaY>0;
+    if(down && y<toolsTop-2){ e.preventDefault(); go(1); }
+    else if(!down && y>2){ e.preventDefault(); go(-1); }
+  },{passive:false});
 
-    const contactOverlay = document.getElementById('contactOverlay');
-    const contactBtn = document.getElementById('contactBtn');
-    const contactCloseBtn = document.getElementById('contactClose');
+  // 手机：上滑翻下一屏，下滑翻上一屏（起点在开关/时间胶囊上时不翻页，保证按钮好点）
+  var y0=null;
+  function onBar(e){ return !!(e.target && e.target.closest && e.target.closest('.ttoggle,.pill,.pills')); }
+  window.addEventListener('touchstart',function(e){ y0 = onBar(e) ? null : e.touches[0].clientY; },{passive:true});
+  window.addEventListener('touchmove',function(e){
+    if(y0===null) return;
+    var dy=e.touches[0].clientY-y0;
+    if(Math.abs(dy)<40) return;
+    if(absorb()){ e.preventDefault(); return; }
+    var y=window.pageYOffset, toolsTop=topOf(tools);
+    if(dy<0 && y<toolsTop-2){ e.preventDefault(); y0=null; go(1); }
+    else if(dy>0 && y>2){ e.preventDefault(); y0=null; go(-1); }
+  },{passive:false});
 
-    contactBtn.addEventListener('click', () => contactOverlay.classList.add('active'));
-    contactCloseBtn.addEventListener('click', () => contactOverlay.classList.remove('active'));
-    contactOverlay.addEventListener('click', (e) => {
-      if (e.target === contactOverlay) contactOverlay.classList.remove('active');
-    });
+  // 鼠标按住往上/往下拖 → 翻页（不用滚轮也行）
+  var drag=false, dStart=null, dMoved=false;
+  window.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse' || e.button!==0) return;
+    if(onBar(e)) return;                          // 在开关/时间胶囊上按下：不当作翻页拖拽
+    drag=true; dStart=e.clientY; dMoved=false;
+  });
+  window.addEventListener('pointermove',function(e){
+    if(!drag || dStart===null) return;
+    var dy=e.clientY-dStart;
+    if(Math.abs(dy)>10) document.body.classList.add('dragging');
+    if(Math.abs(dy)<60) return;                       // 拖动阈值
+    drag=false; dMoved=true;
+    document.body.classList.remove('dragging');
+    go(dy<0?1:-1);
+  });
+  window.addEventListener('pointerup',function(){
+    if(dMoved){                                       // 拖完别误触发卡片链接的点击
+      var block=function(ev){
+        var t=ev.target;
+        if(t && t.closest && t.closest('a') && !t.closest('.ttoggle,.pill,.pills')){
+          ev.preventDefault(); ev.stopPropagation();
+        }
+      };
+      window.addEventListener('click',block,{capture:true,once:true});
+      setTimeout(function(){ window.removeEventListener('click',block,{capture:true}); },0);
+    }
+    drag=false; dStart=null; dMoved=false;
+    document.body.classList.remove('dragging');
+  });
 
-    // QQ 号一键复制
-    const contactQQ = document.getElementById('contactQQ');
-    const contactQQValue = document.getElementById('contactQQValue');
-    const QQ_NUM = '3821888622';
-    contactQQ.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(QQ_NUM);
-        contactQQValue.textContent = '已复制 ✓';
-        setTimeout(() => { contactQQValue.textContent = QQ_NUM + '（点击复制）'; }, 2000);
-      } catch (e) {
-        contactQQValue.textContent = '复制失败，请手动复制: ' + QQ_NUM;
-      }
-    });
-  </script>
+  // 键盘
+  window.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(['PageDown','ArrowDown',' '].indexOf(k)>-1){ if(!absorb()){e.preventDefault(); go(1);} }
+    else if(['PageUp','ArrowUp'].indexOf(k)>-1){ if(!absorb()){e.preventDefault(); go(-1);} }
+    else if(k==='Home'){ if(!absorb()){e.preventDefault(); go(-1);} }
+  });
 
+  // 箭头
+  document.getElementById('down').addEventListener('click',function(){ go(1); });
+
+  // 卡片依次浮出
+  var cards=[].slice.call(document.querySelectorAll('.card'));
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(en){
+        if(en.isIntersecting){
+          var i=cards.indexOf(en.target);
+          setTimeout(function(){ en.target.classList.add('in'); }, Math.max(0,i)*90);
+          io.unobserve(en.target);
+        }
+      });
+    },{threshold:.15});
+    cards.forEach(function(c){ io.observe(c); });
+  }else{
+    cards.forEach(function(c){ c.classList.add('in'); });
+  }
+})();
+</script>
+<script src="assets/theme.js?v=20261103" defer></script>
+<script src="assets/motion.js?v=20261103" defer></script>
+<script src="assets/glass.js?v=20261103" defer></script>
 </body>
 </html>

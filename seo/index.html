@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>搜索引擎是怎么找到网页的？（初一信息技术）</title>
+<link rel="icon" type="image/png" href="/assets/icons/pet.png">
+<meta name="theme-color" content="#f5f8fd">
+<meta name="description" content="写给初一学生的信息技术教学演示，讲清爬虫、索引与排序。">
+<link rel="canonical" href="https://pet-33t.pages.dev/seo/">
+<link rel="apple-touch-icon" href="/assets/icons/pet.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="搜索引擎是怎么找到网页的？ · jasonyzk">
+<meta property="og:description" content="写给初一学生的信息技术教学演示，讲清爬虫、索引与排序。">
+<meta property="og:url" content="https://pet-33t.pages.dev/seo/">
+<meta property="og:image" content="https://pet-33t.pages.dev/assets/icons/pet.png">
+<meta name="twitter:card" content="summary">
+<style>
+:root{
+  --bg:#f5f8fd; --card:#fff; --line:#e6ecf5;
+  --tx:#16233a; --tx2:#55657f; --tx3:#8b98ae;
+  --blue:#2563eb; --blue-l:#e8f0ff; --amber:#f59e0b; --amber-l:#fff5e0;
+  --green:#10b981; --green-l:#e5f8f1; --red:#ef4444; --red-l:#feeceb;
+  --purple:#7c3aed; --purple-l:#f1e9ff;
+  --sh:0 2px 10px rgba(20,35,70,.06), 0 8px 24px rgba(20,35,70,.05);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--tx); line-height:1.8;
+  font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  font-size:16.5px;
+}
+body::before{
+  content:""; position:fixed; inset:0 0 auto 0; height:360px; z-index:0; pointer-events:none;
+  background:linear-gradient(180deg,var(--blue-l) 0%,rgba(230,238,255,0) 100%);
+}
+.wrap{max-width:1000px; margin:0 auto; padding:0 20px; position:relative; z-index:1}
+nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px); background:var(--surface); background:color-mix(in srgb, var(--surface) 86%, transparent); border-bottom:1px solid var(--line)}
+nav .wrap{display:flex; gap:8px; align-items:center; padding:10px 20px; flex-wrap:wrap}
+nav b{color:var(--blue); margin-right:auto}
+nav a{color:var(--tx2); text-decoration:none; font-size:15px; padding:5px 12px; border-radius:999px}
+nav a:hover{background:var(--blue-l); color:var(--blue)}
+/* 返回入口放进导航条，不再用固定悬浮胶囊（会压住正文里的按钮） */
+nav a.nav-back{color:var(--tx2); font-weight:600; margin-right:2px}
+nav a.nav-back:hover{background:var(--surface2); color:var(--blue)}
+@media(max-width:600px){
+  nav .wrap{padding:8px 14px; gap:6px}
+  nav a{font-size:14px; padding:6px 10px}
+}
+header.hero{padding:46px 0 10px}
+.tag{display:inline-block; background:var(--surface); border:1px solid var(--line); color:var(--blue); padding:6px 16px; border-radius:999px; font-size:14px; font-weight:600}
+h1{font-size:34px; line-height:1.35; margin:14px 0 10px}
+h1 em{font-style:normal; color:var(--blue)}
+.sub{color:var(--tx2); font-size:18px; max-width:740px}
+.bigbox{background:var(--surface); border:2px solid var(--blue-b); border-radius:18px; padding:20px 24px; margin-top:22px; box-shadow:var(--sh); font-size:19px}
+.bigbox b{color:var(--blue)}
+section{padding:30px 0 4px; scroll-margin-top:60px}
+.sechead{display:flex; align-items:center; gap:12px; margin-bottom:8px}
+.num{flex:none; width:34px; height:34px; border-radius:10px; background:var(--blue-solid,var(--blue)); color:#fff; display:grid; place-items:center; font-weight:800; font-size:17px}
+h2{font-size:26px; margin:0}
+h3{font-size:19px; margin:0 0 8px}
+.lead{color:var(--tx2); margin:4px 0 16px 46px; font-size:16.5px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; box-shadow:var(--sh); margin-bottom:18px}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.row{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:12px}
+input[type=text]{flex:1 1 240px; font:inherit; color:var(--tx); background:var(--surface); border:2px solid var(--line); border-radius:12px; padding:11px 14px; outline:none}
+input[type=text]:focus{border-color:var(--blue); box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.btn{font:inherit; font-weight:700; cursor:pointer; border:2px solid var(--line); background:var(--surface); color:var(--tx); padding:12px 22px; border-radius:12px; transition:.15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+.btn.amber{background:var(--amber); border-color:var(--amber); color:#fff}
+.btn.big{padding:13px 26px; font-size:17px}
+.btn[disabled]{opacity:.5; cursor:not-allowed; transform:none}
+.toks{display:flex; flex-wrap:wrap; gap:9px; min-height:50px; align-items:center}
+.tok{padding:6px 14px; border-radius:10px; font-weight:700; font-size:17px; background:var(--blue-l); color:var(--blue); border:2px solid var(--blue-b); animation:pop .25s ease-out}
+.tok.g{background:var(--green-l); color:var(--green); border-color:var(--green-b)}
+.tok.a{background:var(--amber-l); color:var(--amber); border-color:var(--amber-b)}
+.tok.r{background:var(--red-l); color:var(--red-ink,var(--red)); border-color:var(--red-b); text-decoration:line-through}
+.tok.p{background:var(--purple-l); color:var(--purple); border-color:var(--purple-b)}
+.tok.gray{background:var(--surface2); color:var(--tx2); border-color:var(--line); font-weight:600}
+@keyframes pop{from{transform:scale(.75) translateY(6px); opacity:0} to{transform:scale(1); opacity:1}}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:14px; color:var(--tx3); margin-top:12px}
+.legend i{display:inline-block; width:12px; height:12px; border-radius:4px; margin-right:5px}
+.flow{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+@media(max-width:760px){.flow{grid-template-columns:repeat(2,1fr)}}
+.fnode{background:var(--surface); border:2px solid var(--line); border-radius:16px; padding:16px 10px; text-align:center; transition:.25s}
+.fnode .fi{font-size:32px}
+.fnode b{display:block; font-size:19px; margin-top:4px}
+.fnode span{display:block; font-size:14px; color:var(--tx2); margin-top:4px; line-height:1.5}
+.fnode.on{border-color:var(--blue); background:var(--blue-l); transform:translateY(-6px); box-shadow:0 10px 22px rgba(37,99,235,.2)}
+.fnode.on b{color:var(--blue)}
+.dlist{display:flex; flex-direction:column; gap:8px}
+.ditem{display:flex; gap:10px; align-items:center; border:2px solid var(--line); border-radius:12px; padding:9px 12px; background:var(--surface); transition:.25s}
+.ditem .dn{font-weight:800; color:var(--tx3); font-size:14px; width:30px; flex:none}
+.ditem .dt{font-size:15px; line-height:1.4}
+.ditem.on{border-color:var(--amber); background:var(--amber-l)}
+.wlist{display:flex; flex-wrap:wrap; gap:8px}
+.wchip{cursor:pointer; padding:5px 12px; border-radius:999px; border:2px solid var(--line); background:var(--surface); font-weight:700; font-size:15px; transition:.15s}
+.wchip:hover{border-color:var(--blue); color:var(--blue)}
+.wchip.on{border-color:var(--blue); background:var(--blue-l); color:var(--blue)}
+.scanlist{display:grid; grid-template-columns:repeat(6,1fr); gap:10px}
+@media(max-width:760px){.scanlist{grid-template-columns:repeat(3,1fr)}}
+.sdoc{background:var(--surface); border:2px solid var(--line); border-radius:14px; padding:12px 8px; text-align:center; transition:.25s; min-height:104px; display:flex; flex-direction:column; justify-content:center; gap:4px}
+.sdoc .no{font-size:12px; color:var(--tx3); font-weight:700}
+.sdoc .nm{font-size:14px; font-weight:600; line-height:1.45}
+.sdoc.scan{border-color:var(--blue); background:var(--blue-l); transform:translateY(-6px); box-shadow:0 10px 20px rgba(37,99,235,.2)}
+.sdoc.hit{border-color:var(--amber); background:var(--amber-l)}
+.sdoc.fast{border-color:var(--green); background:var(--green-l)}
+.sdoc.miss{opacity:.35}
+.stat{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px}
+.stat div{flex:1 1 170px; background:var(--surface2); border:2px solid var(--line); border-radius:14px; padding:10px 16px; text-align:center}
+.stat b{display:block; font-size:30px; color:var(--blue)}
+.stat .a b{color:var(--amber)}
+.stat .g b{color:var(--green)}
+.stat small{color:var(--tx3); font-size:14px}
+.res{border:2px solid var(--line); border-radius:16px; padding:14px 18px; margin-bottom:12px; transition:.2s; position:relative}
+.res:hover{border-color:var(--blue-b); box-shadow:var(--sh)}
+.res .u{font-size:13px; color:var(--green); overflow-wrap:anywhere}
+.res .t{font-size:20px; font-weight:800; color:var(--blue); margin:2px 0 4px}
+.res .sn{color:var(--tx2); font-size:15px}
+mark{background:var(--amber-l); color:var(--amber); padding:0 3px; border-radius:4px; font-weight:700}
+.rk{position:absolute; right:16px; top:12px; font-weight:800; color:var(--blue)}
+.bar{height:10px; background:var(--surface2); border-radius:99px; overflow:hidden; margin-top:10px}
+.bar i{display:block; height:100%; background:linear-gradient(90deg,var(--blue),var(--purple)); border-radius:99px; transition:width .6s}
+.stepbox{border-left:5px solid var(--blue); background:var(--blue-l); padding:12px 16px; border-radius:0 12px 12px 0; margin-bottom:10px; font-size:16px; color:var(--tx2)}
+.stepbox b{color:var(--blue)}
+table.tbl{border-collapse:collapse; width:100%; font-size:15px}
+table.tbl th,table.tbl td{border-bottom:1px solid var(--line); padding:9px 12px; text-align:left}
+table.tbl th{background:var(--surface2); color:var(--tx2)}
+table.tbl td.n{text-align:center; font-weight:800; color:var(--blue)}
+.tblwrap{overflow:auto; border:1px solid var(--line); border-radius:12px}
+.opt{display:block; width:100%; text-align:left; font:inherit; border:2px solid var(--line); border-radius:12px; padding:10px 14px; margin:7px 0; background:var(--surface); cursor:pointer; transition:.15s; font-size:16px}
+.opt:hover{border-color:var(--blue); background:var(--surface2)}
+.opt.ok{border-color:var(--green); background:var(--green-l)}
+.opt.no{border-color:var(--red); background:var(--red-l)}
+.expl{font-size:15px; padding:6px 4px 8px}
+.expl.ok{color:var(--green); font-weight:700}
+.expl.no{color:var(--red); font-weight:700}
+.qbox{border:2px solid var(--line); border-radius:16px; padding:14px 18px; margin-bottom:14px}
+.qbox>p{margin:0 0 6px; font-weight:700; font-size:17px}
+.note{background:var(--blue-l); border:2px solid var(--blue-b); color:var(--blue); border-radius:14px; padding:14px 18px; font-size:16px}
+.note.a{background:var(--amber-l); border-color:var(--amber-b); color:var(--amber)}
+.note.g{background:var(--green-l); border-color:var(--green-b); color:var(--green)}
+footer{padding:30px 0 50px; text-align:center; color:var(--tx3); font-size:14px}
+.hint{color:var(--tx3); font-size:14.5px}
+.empty{color:var(--tx3)}
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+<nav><div class="wrap" data-theme-slot>
+  <a class="nav-back" href="../">← 返回主站</a>
+  <b>🔍 搜索引擎的秘密</b>
+  <a href="#s1">① 四步流程</a>
+  <a href="#s2">② 分词游戏</a>
+  <a href="#s3">③ 倒排小抄</a>
+  <a href="#s4">④ 谁更快</a>
+  <a href="#s5">⑤ 谁排第一</a>
+  <a href="#s6">⑥ 小测</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="tag">初一信息技术 · 信息检索</span>
+  <h1>你输入一个词，<em>网页是怎么被找到的？</em></h1>
+  <p class="sub">在百度、必应里敲下「机器人」，零点几秒后屏幕上出现成千上万条结果。它真的在这一瞬间跑遍了全世界的网页吗？</p>
+  <div class="bigbox">
+    答案：<b>没有。</b>它早就提前做好了功课——给所有网页做了一张<b>“词语 → 网页”的小抄</b>。你一搜索，它只要<b>查这张小抄</b>就行了。<br>
+    这张小抄，就叫 <b>倒排索引</b>。
+  </div>
+</div></header>
+
+<div class="wrap">
+
+<section id="s1">
+  <div class="sechead"><div class="num">1</div><h2>先看整体：一共四步</h2></div>
+  <p class="lead">前三步早就做完了，第四步才是你按下回车后发生的事。</p>
+  <div class="card" data-reveal>
+    <div class="flow" id="flow"></div>
+    <div class="row" style="margin-top:18px">
+      <button class="btn primary big" id="flowPlay">▶ 播放一遍</button>
+      <span class="hint" id="flowDesc">点一下按钮，看看每一步发生了什么。</span>
+    </div>
+  </div>
+  <div class="note g">记住一句话：<b>慢活儿提前干，快活儿当场算。</b>抓网页、切词、做小抄都是提前做好的；你搜索时只是查表。</div>
+</section>
+
+<section id="s2">
+  <div class="sechead"><div class="num">2</div><h2>第一步难题：中文怎么切成词？</h2></div>
+  <p class="lead">英文单词之间有空格，中文没有。电脑先要搞清楚：“机器人社团”应该切成【机器人 / 社团】，而不是【机器 / 人社 / 团】。</p>
+  <div class="card" data-reveal>
+    <div class="row">
+      <input type="text" id="tkInput" value="校园科技节的机器人社团展示了作品">
+      <button class="btn primary big" id="tkGo">切成词</button>
+    </div>
+    <div class="row"><label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="tkStop" checked style="width:24px;height:24px;flex:none"> 丢掉「的、了、是」这类没用的词</label></div>
+    <div class="toks" id="tkOut"></div>
+    <div class="legend">
+      <span><i style="background:var(--blue-l);border:2px solid var(--blue-b)"></i>切出来的词</span>
+      <span><i style="background:var(--red-l);border:2px solid var(--red-b)"></i>被丢掉的“没用的词”</span>
+      <span><i style="background:var(--surface2);border:2px solid var(--line)"></i>电脑不认识的字</span>
+    </div>
+    <div class="toks" id="tkStat" style="margin-top:14px"></div>
+  </div>
+  <div class="note a">哪些词会被丢掉？像“的”“了”“是”“一个”几乎每个网页都有，拿来搜完全没用，电脑会把它们删掉，这样小抄能做得又小又快。</div>
+</section>
+
+<section id="s3">
+  <div class="sechead"><div class="num">3</div><h2>核心：那张神奇的“小抄”</h2></div>
+  <p class="lead">下面有 6 个网页。电脑把每个网页切开后，记下了「哪个词 → 出现在哪几个网页里」。点右边任意一个词试试。</p>
+  <div class="card" data-reveal>
+    <div class="grid2">
+      <div>
+        <h3>📄 网页库</h3>
+        <div class="dlist" id="dlist"></div>
+      </div>
+      <div>
+        <h3>🗂️ 小抄（倒排索引）</h3>
+        <p class="hint" style="margin:-4px 0 8px">点一个词，看看它出现在哪些网页里：</p>
+        <div class="wlist" id="wlist"></div>
+        <div class="toks" id="chain" style="margin-top:16px"></div>
+        <div id="chainTip" class="hint"></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">这就是“倒排”：平时看书是按「页码 → 内容」排的，搜索引擎偏偏反过来，按「词语 → 页码」排。查起来才快。</div>
+</section>
+
+<section id="s4">
+  <div class="sechead"><div class="num">4</div><h2>亲眼看看：有这张小抄有多快</h2></div>
+  <p class="lead">如果没有小抄，电脑只能一个一个网页翻；有了小抄，一步就能跳到答案。选个词，把两个按钮都点一遍。</p>
+  <div class="card" data-reveal>
+    <div class="row">
+      <span>我要找：</span>
+      <select id="cmpTerm" style="font:inherit;padding:10px 14px;border:2px solid var(--line);border-radius:12px;background:var(--surface)"></select>
+      <button class="btn amber" id="cmpSlow">🐢 一个一个翻</button>
+      <button class="btn primary" id="cmpFast">⚡ 查小抄</button>
+      <button class="btn" id="cmpReset">重来</button>
+    </div>
+    <div class="scanlist" id="cmpDocs"></div>
+    <div class="stat">
+      <div class="a"><b id="cSlow">0</b><small>一个一个翻：翻了几个网页</small></div>
+      <div class="g"><b id="cFast">0</b><small>查小抄：看了几条记录</small></div>
+      <div><b id="cHit">0</b><small>找到的网页数</small></div>
+    </div>
+    <div class="stepbox" id="cmpMsg">先点「🐢 一个一个翻」，再点「⚡ 查小抄」，比较一下它们的次数。</div>
+    <div class="note g">把这 6 个网页想成全世界的 300 亿个网页：<b>一个一个翻</b>要翻开 300 亿次；<b>查小抄</b>只要在词典里找一次词。<b>这就是索引的全部意义。</b></div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sechead"><div class="num">5</div><h2>找到一堆网页，谁排第一？</h2></div>
+  <p class="lead">同时找到好几篇的时候，电脑按一个简单的规矩排队：<b>词出现得越多分越高，出现在标题里再加分。</b></p>
+  <div class="card" data-reveal>
+    <div class="row">
+      <input type="text" id="qInput" value="科技节">
+      <button class="btn primary big" id="qGo">搜索</button>
+      <button class="btn" id="qEx1">试试：机器人</button>
+      <button class="btn" id="qEx2">试试：作品</button>
+    </div>
+    <div id="qSteps" style="margin-bottom:14px"></div>
+    <div class="tblwrap"><table class="tbl"><thead><tr><th>网页</th><th>这个词出现了几次</th><th>在标题里吗</th><th>得分</th></tr></thead><tbody id="scoreTbl"></tbody></table></div>
+    <h3 style="margin:20px 0 10px">最后的搜索结果页</h3>
+    <div id="results"></div>
+  </div>
+  <div class="note">真实的搜索引擎排队要复杂得多：还会看网页是不是经常被别人推荐、是不是新发布的、有没有乱堆关键词骗人……但最基本的想法，就是刚才这一套。</div>
+</section>
+
+<section id="s6">
+  <div class="sechead"><div class="num">6</div><h2>三道题，检查一下</h2></div>
+  <p class="lead">做完了给同桌讲一遍原因。</p>
+  <div id="quiz"></div>
+  <div class="card" data-reveal><div class="row">
+    <button class="btn primary" id="qzSubmit">交卷</button>
+    <span class="hint" id="qzScore"></span>
+  </div></div>
+  <div class="card" data-reveal><h3>今天记住三句话</h3>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="tok gray" style="animation:none">1. 搜索<b>不是</b>临时去网上找，网页早就抓好了。</div>
+      <div class="tok gray" style="animation:none">2. 先把网页切成词，再做一张「词 → 网页」的小抄，叫<b>倒排索引</b>。</div>
+      <div class="tok gray" style="animation:none">3. 谁排第一，看<b>相关性</b>：词出现多少次、在不在标题里、网页本身靠不靠谱。</div>
+    </div>
+  </div>
+</section>
+
+<footer>初一信息技术 · 搜索引擎原理演示页 ｜ 全部数据为本机模拟，无需联网</footer>
+</div>
+
+<script>
+/* ===== 小工具 ===== */
+const $ = s => document.querySelector(s);
+const el = (t,c,h) => { const e=document.createElement(t); if(c) e.className=c; if(h!=null) e.innerHTML=h; return e; };
+const esc = s => String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const clear = e => { while(e.firstChild) e.removeChild(e.firstChild); };
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+/* ===== 6 个模拟网页 ===== */
+const DOCS = [
+  {id:1, title:"校园科技节开幕：机器人社团展示创新成果", host:"www.school.edu.cn/news/open", date:"2026-05-12",
+   body:"为期三天的校园科技节今日在学校体育馆开幕。机器人社团展示了自主设计的智能搬运车和图像识别装置，吸引了很多同学前来参观。指导老师说，本次比赛注重培养同学们的创新能力。"},
+  {id:2, title:"校园科技节编程比赛报名通知", host:"jwc.school.edu.cn/notice", date:"2026-05-10",
+   body:"教务处发布通知，校园科技节编程比赛将于下周开始报名。比赛面向全体在校学生，内容是写一串代码解决小问题，得奖的同学可以获得学分。科技节期间还有好玩的技术沙龙。"},
+  {id:3, title:"机器人制作入门教程", host:"blog.stulab.cn/robot01", date:"2026-04-28",
+   body:"这篇教程专给零基础的同学，讲解怎么做一个最简单的机器人：先搭结构，再连接传感器，最后写控制代码反复调试。这个机器人只有巴掌大，文章里有完整的器材清单和示例代码。"},
+  {id:4, title:"人工智能科普讲座走进校园科技节", host:"news.school.edu.cn/ai-talk", date:"2026-05-14",
+   body:"人工智能科普讲座请来了高校专家，给大家讲什么是人工智能、它会不会写错东西。讲座属于校园科技节系列活动，本届科技节一共安排了八场科普活动，科技节期间每周都有新主题，闭幕那天还会公布获奖名单，科技节组委会提醒大家提前报名。现场有人脸识别和语音助手可以体验。"},
+  {id:5, title:"校园科技节摄影比赛优秀作品展示", host:"art.school.edu.cn/photo", date:"2026-05-16",
+   body:"本届校园科技节摄影比赛收到投稿作品三百多件，大家拍了校园实验室、城市夜景和身边的同学。评委按构图、光影、内容打分，获奖作品会在图书馆展出两周。科技节期间展厅每天下午开放，欢迎同学们前去参观，科技节组委会还在门口准备了一面留言墙。"},
+  {id:6, title:"科技节志愿者招募通知", host:"su.school.edu.cn/volunteer", date:"2026-05-08",
+   body:"为了让各项活动顺利开展，学生会向全校招募志愿者八十名，负责现场引导、签到和设备维护。有责任心的同学都可以报名，服务时间会记入社会实践记录。"}
+];
+
+/* ===== 词典与"没用的词" ===== */
+const DICT = new Set(`
+校园 科技节 机器人 社团 展示 创新 成果 为期 三天 今日 学校 体育馆 开幕 自主 设计 智能 搬运 图像 识别 装置 吸引 很多 同学 前来 参观 指导 老师 本次 比赛 注重 培养 能力
+教务处 发布 通知 编程 下周 开始 报名 面向 全体 在校 内容 代码 解决 小问题 得奖 获得 学分 期间 好玩 沙龙
+这篇 教程 零基础 讲解 怎么 做 一个 最简单 先 结构 连接 传感器 最后 编写 控制 反复 调试 文章 完整 器材 清单 示例
+人工智能 科普 讲座 高校 专家 给大家 什么 会不会 东西 属于 系列 活动 每周 都有 主题 闭幕 公布 名单 现场 设置 人脸 语音 助手 可以 体验 期间
+本届 摄影 收到 投稿 作品 三百 摄像 城市 夜景 身边 评委 构图 光影 内容 打分 获奖 将 图书馆 展出 两周 每天 下午 开放 参观 实验室 优秀
+保证 各项 顺利 开展 学生会 招募 志愿者 八十 名 负责 引导 签到 设备 维护 具备 责任心 服务 时间 记入 社会 实践 记录 全校 入门
+搜索 引擎 索引 小抄 词语 网页 标题 正文 分词
+`.trim().split(/\s+/).filter(Boolean));
+const STOP = new Set("的 了 和 与 在 是 我 你 他 就 都 也 很 把 被 对 为 以 及 并 这 那 有 将 等 上 中 下 着 过 而 或 我们 他们 它 一个 什么 还有 啦 呀 哦".trim().split(/\s+/).filter(Boolean));
+
+/* ===== 分词：正向最大匹配 ===== */
+function tokenize(raw){
+  const s = String(raw).toLowerCase(), out = [];
+  let i = 0; const n = s.length;
+  while(i < n){
+    const ch = s[i];
+    if(/[a-z0-9]/.test(ch)){ let j=i; while(j<n && /[a-z0-9]/.test(s[j])) j++; out.push({w:s.slice(i,j), k:"latin"}); i=j; continue; }
+    if(/[\u4e00-\u9fa5]/.test(ch)){
+      let hit = null;
+      for(let len=Math.min(5,n-i); len>=2; len--){ const c = s.slice(i,i+len); if(DICT.has(c)){ hit = c; break; } }
+      if(hit){ out.push({w:hit, k:"word"}); i += hit.length; } else { out.push({w:ch, k:"single"}); i++; }
+      continue;
+    }
+    i++;
+  }
+  return out.map(t => ({...t, stop: STOP.has(t.w)}));
+}
+const useful = t => t.k !== "single" && !t.stop;
+const wordsOf = s => [...new Set(tokenize(s).filter(useful).map(t => t.w))];
+
+/* ===== 倒排索引 ===== */
+const IDX = new Map();  // 词 -> Map(docId -> {tf, tfTitle})
+DOCS.forEach(d => {
+  tokenize(d.title).forEach(t => { if(!useful(t)) return; addRec(t.w, d.id, true); });
+  tokenize(d.body).forEach(t => { if(!useful(t)) return; addRec(t.w, d.id, false); });
+});
+function addRec(w, id, inTitle){
+  let m = IDX.get(w); if(!m){ m = new Map(); IDX.set(w, m); }
+  let r = m.get(id); if(!r){ r = {tf:0, tfTitle:0}; m.set(id, r); }
+  r.tf++; if(inTitle) r.tfTitle++;
+}
+
+/* ===== ① 四步流程 ===== */
+(function(){
+  const STEPS = [
+    {i:"🕷️", t:"抓网页", d:"蜘蛛程序顺着链接，把网页存下来", say:"第 1 步：蜘蛛程序顺着链接把网页下载保存起来（早就做完了）。"},
+    {i:"🔪", t:"切成词", d:"把一整段话切开，丢掉没用的词", say:"第 2 步：把正文切成词，扔掉“的、了、是”这些没用的词（早就做完了）。"},
+    {i:"🗂️", t:"做小抄", d:"记下每个词出现在哪些网页里", say:"第 3 步：做一张“词语 → 网页”的小抄，这就是倒排索引（早就做完了）。"},
+    {i:"⚡", t:"查小抄", d:"你搜索的那一瞬间：查表 + 排队", say:"第 4 步：你按下回车 → 解析关键词 → 查小抄 → 打分排队 → 出结果。"}
+  ];
+  const box = $("#flow");
+  STEPS.forEach(s => box.appendChild(el("div","fnode",`<div class="fi">${s.i}</div><b>${s.t}</b><span>${s.d}</span>`)));
+  const nodes = [...box.children];
+  let timer = null, i = 0;
+  $("#flowPlay").onclick = () => {
+    clearTimeout(timer); nodes.forEach(n => n.classList.remove("on")); i = 0;
+    const tick = () => {
+      if(i > 0) nodes[i-1].classList.remove("on");
+      if(i >= nodes.length){ $("#flowDesc").textContent = "完成！前三步早就做好了，只有最后一步是你按下回车之后发生的。"; return; }
+      nodes[i].classList.add("on");
+      $("#flowDesc").textContent = STEPS[i].say;
+      i++; timer = setTimeout(tick, 1600);
+    };
+    tick();
+  };
+})();
+
+/* ===== ② 分词游戏 ===== */
+(function(){
+  function run(){
+    const toks = tokenize($("#tkInput").value);
+    const filter = $("#tkStop").checked;
+    const out = $("#tkOut"), st = $("#tkStat");
+    clear(out); clear(st);
+    let w = 0, stopN = 0, singleN = 0;
+    toks.forEach((t,i) => {
+      if(t.stop) stopN++; else if(t.k === "single") singleN++; else w++;
+      if(filter && t.stop) return;
+      let cls = "tok" + (t.stop ? " r" : t.k === "single" ? " gray" : "");
+      const b = el("span", cls, esc(t.w));
+      b.style.animationDelay = (i * 45) + "ms";
+      out.appendChild(b);
+    });
+    const add = (txt,c) => { const b = el("span","tok "+(c||""), txt); b.style.animation = "none"; st.appendChild(b); };
+    add("切出词 " + w + " 个", "");
+    add("丢掉停用词 " + stopN + " 个", "r");
+    add("不认识的字 " + singleN + " 个", "gray");
+    if(!out.children.length) out.appendChild(el("span","empty","全是没用的词，被丢光了"));
+  }
+  $("#tkGo").onclick = run;
+  $("#tkStop").onchange = run;
+  $("#tkInput").addEventListener("keydown", e => { if(e.key === "Enter") run(); });
+  run();
+})();
+
+/* ===== ③ 点词看倒排链 ===== */
+(function(){
+  const dl = $("#dlist");
+  DOCS.forEach(d => {
+    dl.appendChild(el("div","ditem",`<div class="dn">第${d.id}篇</div><div class="dt">${esc(d.title)}</div>`));
+  });
+  const wl = $("#wlist");
+  const words = [...IDX.entries()].sort((a,b) => b[1].size - a[1].size).slice(0, 22);
+  function showWord(w){
+    [...wl.children].forEach(c => c.classList.toggle("on", c.dataset.w === w));
+    [...dl.children].forEach((c,i) => c.classList.toggle("on", !!IDX.get(w).has(i+1)));
+    const box = $("#chain"); clear(box);
+    box.appendChild(el("span","tok a", esc(w)));
+    box.appendChild(el("span","tok gray","→"));
+    [...IDX.get(w).keys()].sort((a,b)=>a-b).forEach(id => box.appendChild(el("span","tok g","第" + id + "篇")));
+    const n = IDX.get(w).size;
+    $("#chainTip").textContent = `“${w}”一共出现在 ${n} 个网页里。电脑只要记这一行，下次就能立刻找到它们。`;
+  }
+  words.forEach(([w,m]) => {
+    const c = el("span","wchip", esc(w) + "（" + m.size + "）");
+    c.dataset.w = w; c.onclick = () => showWord(w);
+    wl.appendChild(c);
+  });
+  showWord("科技节");
+})();
+
+/* ===== ④ 一个一个翻 vs 查小抄 ===== */
+(function(){
+  const sel = $("#cmpTerm"), list = $("#cmpDocs"), msg = $("#cmpMsg");
+  ["机器人","科技节","校园","比赛","讲座","志愿者","人工智能","编程","作品"].forEach(w => {
+    const o = el("option", null, w); o.value = w; sel.appendChild(o);
+  });
+  sel.value = "机器人";
+  const cards = DOCS.map(d => {
+    const c = el("div","sdoc",`<div class="no">第${d.id}篇</div><div class="nm">${esc(d.title.slice(0,12))}…</div>`);
+    list.appendChild(c); return c;
+  });
+  let busy = false;
+  function reset(silent){
+    cards.forEach(c => c.className = "sdoc");
+    $("#cSlow").textContent = "0"; $("#cFast").textContent = "0"; $("#cHit").textContent = "0";
+    if(!silent) msg.innerHTML = "先点「🐢 一个一个翻」，再点「⚡ 查小抄」，比较一下它们的次数。";
+  }
+  sel.onchange = () => reset();
+  $("#cmpReset").onclick = () => reset();
+  async function slow(){
+    if(busy) return; busy = true; reset(true);
+    const w = sel.value;
+    msg.innerHTML = `<b>一个一个翻：</b>把每个网页从头读到尾，检查里面有没有“${esc(w)}”。`;
+    let hit = 0;
+    for(let i=0;i<DOCS.length;i++){
+      cards[i].className = "sdoc scan"; await wait(520);
+      $("#cSlow").textContent = i + 1;
+      if(IDX.get(w) && IDX.get(w).has(i+1)){ hit++; $("#cHit").textContent = hit; cards[i].className = "sdoc hit"; }
+      else cards[i].className = "sdoc miss";
+      await wait(280);
+    }
+    msg.innerHTML = `翻完了！<b>一共翻了 6 个网页</b>才知道结果。网页越多，这样越慢。`;
+    busy = false;
+  }
+  async function fast(){
+    if(busy) return; busy = true; reset(true);
+    const w = sel.value;
+    msg.innerHTML = `<b>查小抄：</b>直接在词典里找到“${esc(w)}”，一步拿到它后面的网页列表。`;
+    await wait(400);
+    const ids = IDX.get(w) ? [...IDX.get(w).keys()] : [];
+    $("#cFast").textContent = "1"; $("#cHit").textContent = ids.length;
+    DOCS.forEach((d,i) => {
+      cards[i].className = "sdoc " + (ids.includes(d.id) ? "fast" : "miss");
+    });
+    msg.innerHTML = `查小抄：<b>只看了 1 条记录</b>，立刻知道结果。网页从 6 个变成 300 亿个，这一步还是只查 1 次！`;
+    busy = false;
+  }
+  $("#cmpSlow").onclick = slow;
+  $("#cmpFast").onclick = fast;
+  reset();
+})();
+
+/* ===== ⑤ 谁排第一 ===== */
+function highlight(text, ws){
+  let s = esc(text);
+  [...ws].sort((a,b) => b.length - a.length).forEach(w => {
+    if(!w) return;
+    const safe = esc(w);
+    s = s.replace(new RegExp(safe.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"), "g"), `<mark>${safe}</mark>`);
+  });
+  return s;
+}
+function snippet(d, ws){
+  const text = d.title + "　" + d.body;
+  let pos = -1;
+  for(const w of ws){ const p = text.indexOf(w); if(p >= 0){ pos = p; break; } }
+  if(pos < 0) pos = 0;
+  const start = Math.max(0, pos - 16);
+  let s = text.slice(start, start + 58);
+  if(start > 0) s = "…" + s;
+  if(start + 58 < text.length) s += "…";
+  return highlight(s, ws);
+}
+(function(){
+  const steps = $("#qSteps"), tb = $("#scoreTbl"), res = $("#results");
+  function run(){
+    clear(steps); clear(tb); clear(res);
+    const q = $("#qInput").value.trim();
+    if(!q){ steps.appendChild(el("div","stepbox","输入一个词试试，比如 <b>科技节</b> 或 <b>机器人</b>。")); return; }
+    const ws = wordsOf(q);
+    if(!ws.length){ steps.appendChild(el("div","stepbox","这些字没法切成有用的词，换一个试试（比如“科技节”）。")); return; }
+    const contain = w => d => !!(IDX.get(w) && IDX.get(w).has(d.id));
+    let docs = DOCS.filter(d => ws.every(w => contain(w)(d)));
+    let mode = "全部";
+    if(!docs.length){ docs = DOCS.filter(d => ws.some(w => contain(w)(d))); mode = "任一"; }
+    const chains = ws.map(w => {
+      const m = IDX.get(w);
+      return m ? `<span class="tok a">${esc(w)}</span> → ${[...m.keys()].map(i=>`<span class="tok g">第${i}篇</span>`).join("")}` : `<span class="tok a">${esc(w)}</span> → <span class="tok gray">小抄里没有这个词</span>`;
+    });
+    steps.appendChild(el("div","stepbox",`<b>① 把你的输入切成词：</b><div class="toks" style="margin-top:8px">${ws.map(w=>`<span class="tok">${esc(w)}</span>`).join("")}</div>`));
+    steps.appendChild(el("div","stepbox",`<b>② 查小抄（要求含${mode === "全部" ? "全部" : "任意"}关键词）：</b><div class="toks" style="margin-top:8px">${chains.join('<span class="tok gray">｜</span>')}</div>`));
+    if(!docs.length){ steps.appendChild(el("div","stepbox","没有网页含有这些词。换个词试试！")); return; }
+    const scored = docs.map(d => {
+      let tf = 0, titleHit = false;
+      ws.forEach(w => { const m = IDX.get(w); const r = m && m.get(d.id); if(!r) return; tf += r.tf; if(r.tfTitle) titleHit = true; });
+      return {d, tf, titleHit, score: tf + (titleHit ? 3 : 0)};
+    }).sort((a,b) => b.score - a.score);
+    steps.appendChild(el("div","stepbox",`<b>③ 打分排队：</b>每出现 1 次 +1 分，标题里也出现再加 <b>3</b> 分。找到了 ${scored.length} 个网页。`));
+    const max = Math.max(...scored.map(s => s.score));
+    scored.forEach(s => {
+      tb.appendChild(el("tr", null,
+        `<td>第${s.d.id}篇　${esc(s.d.title.slice(0,14))}</td>` +
+        `<td class="n">${s.tf}</td>` +
+        `<td class="n">${s.titleHit ? "✔ 有，+3" : "没有"}</td>` +
+        `<td class="n">${s.score}</td>`));
+    });
+    scored.forEach((s,i) => {
+      res.appendChild(el("div","res",
+        `<div class="rk">第 ${i+1} 名 · ${s.score} 分</div>
+         <div class="u">${esc(s.d.host)}</div>
+         <div class="t">${highlight(s.d.title, ws)}</div>
+         <div class="sn">${snippet(s.d, ws)}</div>
+         <div class="bar"><i style="width:${Math.max(8, s.score / max * 100)}%"></i></div>`));
+    });
+  }
+  $("#qGo").onclick = run;
+  $("#qInput").addEventListener("keydown", e => { if(e.key === "Enter") run(); });
+  $("#qEx1").onclick = () => { $("#qInput").value = "机器人"; run(); };
+  $("#qEx2").onclick = () => { $("#qInput").value = "作品"; run(); };
+  run();
+})();
+
+/* ===== ⑥ 三道小题 ===== */
+(function(){
+  const QS = [
+    {q:"你按下回车的一瞬间，搜索引擎才开始去各个网站上找网页吗？",
+     o:["是的，它就是这时候开始上网找的","不是，网页早就抓取并做好了小抄"],a:1,
+     e:"抓网页、切词、做小抄都是提前做好的，所以搜索才会这么快。刚发布的新网页常常搜不到，就是这个原因。"},
+    {q:"“倒排索引”这张小抄上写的是：",
+     o:["网页里有哪些图片","每个词出现在哪几个网页里","谁在什么时间搜了什么"],a:1,
+     e:"它就是一份「词语 → 网页清单」的对照表，查起来一步到位。"},
+    {q:"两个网页都提到了“科技节”，一般谁会排在前面？",
+     o:["网页里「科技节」出现得更多、标题里也有的那个","后发布的那个"],a:0,
+     e:"搜索引擎按相关性排队：关键词出现次数越多、位置越重要（比如标题），得分就越高。"}
+  ];
+  const box = $("#quiz"), picks = new Array(QS.length).fill(-1);
+  QS.forEach((it,qi) => {
+    const b = el("div","qbox");
+    b.appendChild(el("p", null, (qi+1) + ". " + esc(it.q)));
+    it.o.forEach((txt,oi) => {
+      const btn = el("button","opt", String.fromCharCode(65+oi) + ". " + esc(txt));
+      btn.onclick = () => {
+        picks[qi] = oi;
+        b.querySelectorAll(".opt").forEach(x => { x.classList.add("lock"); x.disabled = true; });
+        btn.classList.add(oi === it.a ? "ok" : "no");
+        if(oi !== it.a) b.querySelectorAll(".opt")[it.a].classList.add("ok");
+        b.appendChild(el("div","expl " + (oi === it.a ? "ok" : "no"), (oi === it.a ? "✔ 答对了！" : "✘ 再想想～") + it.e));
+        $("#qzScore").textContent = "";
+      };
+      b.appendChild(btn);
+    });
+    box.appendChild(b);
+  });
+  $("#qzSubmit").onclick = () => {
+    const no = picks.filter(p => p < 0).length;
+    if(no){ $("#qzScore").innerHTML = `<span style="color:var(--amber)">还有 ${no} 题没做</span>`; return; }
+    const ok = QS.filter((it,i) => picks[i] === it.a).length;
+    $("#qzScore").innerHTML = `<span style="color:var(--blue);font-size:18px;font-weight:800">你的得分：${ok} / ${QS.length}　${ok===3?"🏆 满分！":ok===2?"👍 不错":"📖 再回去看一遍第 3 节"}</span>`;
+  };
+})();
+</script>
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>下载地址 · 桌面宠物 · jasonyzk</title>
+<link rel="icon" type="image/png" href="/pet/assets/app_icon.png">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="桌面宠物 v1.0.3 安装包下载，百度网盘 / 夸克网盘 / 迅雷网盘。">
+<link rel="canonical" href="https://pet-33t.pages.dev/pet/download.html">
+<link rel="apple-touch-icon" href="/pet/assets/app_icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="桌面宠物 · 下载地址 · jasonyzk">
+<meta property="og:description" content="桌面宠物 v1.0.3 安装包下载，百度网盘 / 夸克网盘 / 迅雷网盘。">
+<meta property="og:url" content="https://pet-33t.pages.dev/pet/download.html">
+<meta property="og:image" content="https://pet-33t.pages.dev/pet/assets/app_icon.png">
+<meta name="twitter:card" content="summary">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--tx);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 100vh;
+  }
+
+  .back {
+    position: fixed;
+    top: 15px;
+    left: 13px;
+    padding: 9px 11px;
+    min-height: 34px;
+    border-radius: 10px;
+    color: var(--tx2);
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .back:hover { color: var(--tx); }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    color: var(--tx2);
+    margin-bottom: 40px;
+  }
+
+  .dl-list {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .dl-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 20px 22px;
+    border-radius: 14px;
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .dl-item:hover {
+    background: var(--surface2);
+    border-color: var(--line);
+    transform: translateY(-2px);
+  }
+
+  .dl-item.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .dl-item.disabled:hover {
+    transform: none;
+    background: var(--surface);
+    border-color: var(--line);
+  }
+
+  /* 下载关闭提示 */
+  .closed {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px dashed var(--tx3);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--tx2);
+    line-height: 1.8;
+    text-align: center;
+  }
+  .closed b { display: block; font-size: 15px; color: var(--tx); margin-bottom: 6px; }
+
+  .dl-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tx);
+    letter-spacing: 0;
+  }
+
+  .dl-icon.baidu   { background: #2563eb; color: #fff; }
+  .dl-icon.quark  { background: #2563eb; color: #fff; }
+  .dl-icon.xunlei { background: #b45309; color: #fff; }
+  .dl-icon.local   { background: linear-gradient(135deg, #b45309, #c2410c); color: #fff; }
+
+  .dl-text { flex: 1; }
+  .dl-name { font-size: 15px; font-weight: 600; }
+  .dl-sub  { font-size: 12px; color: var(--tx2); margin-top: 3px; }
+  .dl-arrow { color: var(--tx3); font-size: 18px; }
+
+  .note {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--tx3);
+    text-align: center;
+    max-width: 360px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 80px 16px 60px; }
+    .page-title { font-size: 24px; }
+    .dl-item { padding: 16px 18px; }
+  }
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+
+  <a class="back" href="index.html">← 桌面宠物</a>
+  <a class="back" style="left:130px" href="..">← 返回主站</a>
+
+  <div class="page-title">下载地址</div>
+  <div class="page-sub" id="pageSub">选择任意方式下载桌面宠物</div>
+
+  <div class="closed" id="closedNote" hidden>
+    <b>下载通道暂时关闭</b>
+    安装包正在更新，网盘下载暂不可用，恢复时间请留意本页。<br>
+    这段时间可以先看 GitHub 源码，或用页面下方的方式联系作者。
+  </div>
+
+  <div class="dl-list">
+    <a class="dl-item" data-reveal data-netdisk href="https://pan.baidu.com/s/1DsRdd585o6qt_PKrK56oog?pwd=j0q3" target="_blank" rel="noopener" onclick="if(!confirm('即将跳转到百度网盘下载页面，是否继续？')) return false;">
+      <div class="dl-icon baidu">百度</div>
+      <div class="dl-text">
+        <div class="dl-name">百度网盘</div>
+        <div class="dl-sub">提取码：j0q3</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-item" data-reveal data-netdisk href="https://pan.quark.cn/s/0a8c6d074b23" target="_blank" rel="noopener" onclick="if(!confirm('即将跳转到夸克网盘下载页面，是否继续？')) return false;">
+      <div class="dl-icon quark">夸克</div>
+      <div class="dl-text">
+        <div class="dl-name">夸克网盘</div>
+        <div class="dl-sub">提取码：见链接</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-item" data-reveal data-netdisk href="https://pan.xunlei.com/s/VP-ImNFh2lSQymtjiFdXPGfUA1?pwd=y8yb" target="_blank" rel="noopener" onclick="if(!confirm('即将跳转到迅雷网盘下载页面，是否继续？')) return false;">
+      <div class="dl-icon xunlei">迅雷</div>
+      <div class="dl-text">
+        <div class="dl-name">迅雷网盘</div>
+        <div class="dl-sub">提取码：y8yb</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+
+    <a class="dl-item" data-reveal href="https://github.com/jasonyzk666/desktop-pet" target="_blank" rel="noopener">
+      <div class="dl-icon local">源码</div>
+      <div class="dl-text">
+        <div class="dl-name">GitHub 源码仓库</div>
+        <div class="dl-sub">网盘失效时可在此提 issue 索取</div>
+      </div>
+      <div class="dl-arrow">→</div>
+    </a>
+  </div>
+
+  <div class="note" id="pageNote" data-reveal>
+    exe 约 45 MB，Windows 10 / 11 直接运行，无需安装 Python<br>
+    若被杀毒软件拦截，选择「允许运行」即可<br>
+    所有下载源失效请联系 QQ 3821888622
+  </div>
+
+  <script>
+    /* ↓↓↓ 下载开关：恢复下载时把 DOWNLOAD_OPEN 改成 true，网盘条目会自动恢复可点 ↓↓↓ */
+    var DOWNLOAD_OPEN = false;
+    (function(){
+      if(DOWNLOAD_OPEN) return;
+      document.getElementById('closedNote').hidden = false;
+      document.getElementById('pageSub').textContent = '下载通道暂时关闭，以下链接暂不可用';
+      var items = document.querySelectorAll('.dl-item[data-netdisk]');
+      for(var i=0;i<items.length;i++){
+        var el = items[i];
+        el.classList.add('disabled');
+        el.removeAttribute('href');
+        el.removeAttribute('onclick');
+        el.removeAttribute('target');
+        el.setAttribute('aria-disabled','true');
+        el.setAttribute('title','暂未开放');
+        var arrow = el.querySelector('.dl-arrow');
+        if(arrow) arrow.textContent = '暂停';
+      }
+      var note = document.getElementById('pageNote');
+      if(note) note.innerHTML = '恢复下载的时间会在这里更新<br>也可通过下方 GitHub 或 QQ 联系作者';
+    })();
+  </script>
+
+
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+</body>
+</html>

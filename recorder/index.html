@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>操作录制 · jasonyzk</title>
+<meta name="theme-color" content="#fbfbf9">
+<link rel="canonical" href="https://pet-33t.pages.dev/recorder/">
+<link rel="apple-touch-icon" href="/assets/icons/pet.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="操作录制 · jasonyzk">
+<meta property="og:description" content="安卓悬浮窗连招工具：录制并回放触屏手势，基于无障碍服务，免 Root。">
+<meta property="og:url" content="https://pet-33t.pages.dev/recorder/">
+<meta property="og:image" content="https://pet-33t.pages.dev/assets/icons/pet.png">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="安卓悬浮窗连招工具：录制并回放触屏手势，基于无障碍服务，免 Root。">
+<link rel="icon" type="image/png" href="../assets/icons/pet.png">
+<style>
+:root{
+  --bg:#fbfbf9; --tx:#1a1a17; --tx2:#6e6d66; --tx3:#a3a29a;
+  --line:#e8e7e2;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,"Courier New",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.topbar{
+  padding:22px 4vw 0;
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:13px;
+}
+.topbar > span{margin-left:auto}
+/* 命中区补足到 32px 以上，用负 margin 抵消，视觉位置不变 */
+.back{color:var(--tx2);transition:color .15s;display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;margin:-7px -9px;border-radius:10px}
+.back:hover{color:var(--tx)}
+
+/* ===== 横屏布局：左信息 / 右内容 ===== */
+.layout{
+  padding:26px 4vw 40px;
+  display:grid;grid-template-columns:360px 1fr;gap:6vw;align-items:start;
+}
+.side{position:sticky;top:34px}
+.logo{width:66px;height:66px;display:flex;align-items:center;justify-content:center;background:var(--tx);border-radius:18px}
+.logo svg{width:32px;height:32px;stroke:var(--bg);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:30px;font-weight:600;letter-spacing:-.3px;line-height:1.3;margin-top:18px}
+.sub{color:var(--tx2);font-size:14.5px;margin-top:4px}
+.pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.pill{font-family:var(--mono);font-size:11px;color:var(--tx2);border:1px solid var(--line);padding:5px 12px;border-radius:99px}
+.status{
+  display:flex;align-items:center;gap:10px;margin-top:18px;padding:12px 16px;
+  border:1px dashed var(--line);border-radius:12px;background:var(--surface);
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex:0 0 8px}
+.status p{font-size:13.5px;color:var(--tx2)}
+
+/* 横屏手机示意 */
+.phone{
+  margin-top:22px;border:1px solid var(--line);border-radius:14px;background:var(--surface);
+  padding:10px;
+}
+.phone svg{display:block;width:100%;height:auto;border-radius:8px}
+
+h2.blk{
+  font-size:12px;font-weight:600;letter-spacing:1.6px;color:var(--tx3);font-family:var(--mono);
+  margin:38px 0 0;padding-bottom:8px;border-bottom:1px solid var(--line);
+}
+h2.blk:first-child{margin-top:0}
+ul.feat{list-style:none;margin-top:14px}
+ul.feat li{display:flex;gap:12px;padding:11px 4px;border-bottom:1px solid var(--line)}
+ul.feat li span:first-child{font-family:var(--mono);font-size:12px;color:var(--tx3);padding-top:3px;min-width:22px}
+ul.feat li b{font-weight:600;font-size:15px}
+ul.feat li p{font-size:13.5px;color:var(--tx3);line-height:1.6;margin-top:2px}
+ul.feat li div{min-width:0}
+.stack{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+.stack span{font-family:var(--mono);font-size:12px;color:var(--tx2);background:var(--surface);border:1px solid var(--line);padding:5px 12px;border-radius:8px}
+.note{margin-top:22px;font-size:13.5px;color:var(--tx3);line-height:1.75}
+.contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.contact a,.contact button{font-family:var(--mono);font-size:13px;color:var(--tx2);background:transparent;border:1px solid var(--line);padding:9px 16px;min-height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:99px;transition:all .15s;cursor:pointer}
+.contact a:hover,.contact button:hover{color:var(--tx);border-color:var(--tx3)}
+footer{
+  padding:16px 4vw 40px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;
+  font-family:var(--mono);font-size:12px;color:var(--tx3);
+}
+/* 页脚返回链接也补足触摸命中区（30px 以上），负 margin 抵消视觉位移 */
+footer a{display:inline-flex;align-items:center;min-height:32px;padding:6px 8px;margin:-6px -8px;color:var(--tx2);border-radius:8px}
+footer a:hover{color:var(--tx)}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:0;padding:18px 20px 30px}
+  .side{position:static}
+  .phone{max-width:440px}
+  .topbar{padding:20px 20px 0}
+  footer{padding:20px 20px 40px}
+  h1{font-size:26px}
+}
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+
+<div class="topbar" data-theme-slot>
+  <a class="back" href="../">← 返回主站</a>
+  <span style="color:var(--tx3)">Android · Kotlin</span>
+</div>
+
+<div class="layout">
+
+  <!-- 左栏 -->
+  <aside class="side">
+    <span class="logo">
+      <svg viewBox="0 0 24 24">
+        <circle cx="11" cy="14" r="3.2"/>
+        <path d="M8 11V6.5a1.6 1.6 0 0 1 1.6-1.6h2.6"/>
+        <path d="M5 19c1.4 0 2.4-.6 3.2-1.6"/>
+        <path d="M18.5 5.5v3M20 7h-3"/>
+      </svg>
+    </span>
+    <h1>操作录制</h1>
+    <p class="sub">录一次连招，让它自己重复</p>
+    <div class="pills">
+      <span class="pill">Android</span>
+      <span class="pill">免 Root</span>
+      <span class="pill">自用</span>
+    </div>
+
+    <div class="status" data-reveal>
+      <span class="dot"></span>
+      <p><b>开发中</b> · 自用，暂不提供 APK</p>
+    </div>
+
+    <!-- 横屏示意：游戏画面 + 悬浮控制面板 -->
+    <div class="phone" data-reveal>
+      <svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="150" fill="#1b1f26"/>
+        <rect x="0" y="0" width="300" height="150" fill="url(#g)"/>
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#243044"/>
+            <stop offset="1" stop-color="#161a21"/>
+          </linearGradient>
+        </defs>
+        <!-- 画面里的示意元素 -->
+        <circle cx="72" cy="76" r="20" fill="#37415a"/>
+        <rect x="120" y="52" width="90" height="8" rx="4" fill="#39445c"/>
+        <rect x="120" y="70" width="62" height="8" rx="4" fill="#2f3850"/>
+        <!-- 悬浮钮 -->
+        <circle cx="262" cy="24" r="13" fill="#ffffff" opacity=".14"/>
+        <circle cx="262" cy="24" r="6.5" fill="#ffffff"/>
+        <!-- 悬浮控制面板 -->
+        <rect x="150" y="104" width="136" height="34" rx="10" fill="#ffffff" opacity=".1"/>
+        <rect x="150" y="104" width="136" height="34" rx="10" fill="none" stroke="#ffffff" stroke-opacity=".22"/>
+        <circle cx="170" cy="121" r="7" fill="#ffffff"/>
+        <rect x="186" y="117" width="34" height="8" rx="4" fill="#ffffff" opacity=".55"/>
+        <rect x="230" y="113" width="20" height="16" rx="4" fill="#ffffff" opacity=".3"/>
+        <rect x="258" y="113" width="16" height="16" rx="4" fill="#ffffff" opacity=".3"/>
+      </svg>
+    </div>
+  </aside>
+
+  <!-- 右栏 -->
+  <main>
+    <h2 class="blk">能 做 什 么</h2>
+    <ul class="feat">
+      <li data-reveal><span>01</span><div><b>录制手势</b><p>悬浮窗点录制，正常操作手机，按真实间隔完整记下来。</p></div></li>
+      <li data-reveal><span>02</span><div><b>循环回放</b><p>设定次数与间隔，整套动作自动复放，随时中止。</p></div></li>
+      <li data-reveal><span>03</span><div><b>悬浮面板</b><p>游戏内随时呼出，开始 / 停止 / 调速都在手边。</p></div></li>
+      <li data-reveal><span>04</span><div><b>免 Root</b><p>无障碍服务注入手势，不刷机、不连电脑。</p></div></li>
+    </ul>
+
+    <h2 class="blk">技 术 实 现</h2>
+    <ul class="feat">
+      <li data-reveal><span>A</span><div><b>Accessibility Service + dispatchGesture</b><p>用手势注入 API 回放触控。</p></div></li>
+      <li data-reveal><span>B</span><div><b>TYPE_ACCESSIBILITY_OVERLAY 悬浮钮</b><p>悬浮控件挂在无障碍窗口层。</p></div></li>
+      <li data-reveal><span>C</span><div><b>透明 Activity 承载 Compose</b><p>绕开 ComposeView 挂 WindowManager 的生命周期崩溃。</p></div></li>
+      <li data-reveal><span>D</span><div><b>沉浸式录制页</b><p>保证视图坐标与屏幕坐标一致，回放位置才准。</p></div></li>
+      <li data-reveal><span>E</span><div><b>黑白简约 UI</b><p>左侧栏 + 右侧内容，窄屏自动切顶部导航。</p></div></li>
+    </ul>
+
+    <div class="stack" data-reveal>
+      <span>Kotlin</span><span>Jetpack Compose</span><span>Accessibility Service</span><span>Android 7.0+</span>
+    </div>
+
+    <p class="note" data-reveal>自用工具，不上架、不发安装包。想聊实现思路可以联系我。</p>
+
+    <h2 class="blk">联 系</h2>
+    <div class="contact" data-reveal>
+      <a href="mailto:1583398311@163.com">1583398311@163.com</a>
+      <button type="button" onclick="copyQQ(this)">QQ · 3821888622</button>
+      <a href="https://github.com/jasonyzk666" target="_blank" rel="noopener">GitHub · jasonyzk666</a>
+    </div>
+  </main>
+
+</div>
+
+<footer>
+  <span>© 2026 jasonyzk</span>
+  <a href="../">← 返回总站</a>
+</footer>
+
+<script>
+async function copyQQ(el){
+  try{
+    await navigator.clipboard.writeText('3821888622');
+    el.textContent='QQ · 已复制 ✓';
+    setTimeout(()=>el.textContent='QQ · 3821888622',1800);
+  }catch(e){
+    el.textContent='QQ · 3821888622（请手动复制）';
+  }
+}
+</script>
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+</body>
+</html>

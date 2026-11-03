@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桌面宠物 · jasonyzk</title>
+<link rel="icon" type="image/png" href="/pet/assets/app_icon.png">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="会走路、会跟随、能喂饭的写实人像 Windows 桌面宠物，支持双屏与明暗主题。">
+<link rel="canonical" href="https://pet-33t.pages.dev/pet/">
+<link rel="apple-touch-icon" href="/pet/assets/app_icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="桌面宠物 Desktop Pet · jasonyzk">
+<meta property="og:description" content="会走路、会跟随、能喂饭的写实人像 Windows 桌面宠物，支持双屏与明暗主题。">
+<meta property="og:url" content="https://pet-33t.pages.dev/pet/">
+<meta property="og:image" content="https://pet-33t.pages.dev/pet/assets/app_icon.png">
+<meta name="twitter:card" content="summary">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--tx);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 100vh;
+  }
+
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 2px solid var(--line);
+  }
+
+  .name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .bio {
+    font-size: 14px;
+    color: var(--tx2);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .version {
+    font-size: 12px;
+    color: var(--tx2);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .tags {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tag {
+    background: var(--surface2);
+    border: 1px solid var(--line);
+    color: var(--tx3);
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  .links {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .link-btn {
+    display: flex;
+    width: 100%;
+    font-family: inherit;
+    text-align: left;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 18px 22px;
+    border-radius: 14px;
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .link-btn:hover {
+    background: var(--surface2);
+    border-color: var(--line);
+    transform: translateY(-2px);
+  }
+
+  .link-btn.btn-click {
+    cursor: pointer;
+  }
+
+  .link-icon {
+    width: 22px;
+    height: 22px;
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .link-text { flex: 1; }
+  .link-arrow { opacity: 0.3; font-size: 14px; }
+
+  /* Download modal — 4 列表 */
+  .dl-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dl-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .dl-item:hover {
+    background: var(--surface2);
+    border-color: var(--line);
+    transform: translateY(-2px);
+  }
+
+  .dl-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .dl-item.disabled:hover {
+    transform: none;
+    background: var(--bg);
+    border-color: var(--line);
+  }
+
+  .dl-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--tx);
+  }
+
+  .dl-icon.baidu  { background: var(--blue); }
+  .dl-icon.quark  { background: var(--blue); }
+  .dl-icon.xunlei { background: var(--amber); color: var(--bg); }
+  .dl-icon.local  { background: linear-gradient(135deg, var(--amber), var(--amber-2)); }
+
+  .dl-text { flex: 1; }
+  .dl-sub { font-size: 11px; color: var(--tx2); margin-top: 2px; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  /* 自定义深色滚动条 */
+  .modal::-webkit-scrollbar { width: 8px; }
+  .modal::-webkit-scrollbar-track { background: transparent; }
+  .modal::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+  .modal::-webkit-scrollbar-thumb:hover { background: var(--surface2); }
+  .modal { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--tx2);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover {
+    color: var(--tx);
+  }
+
+  .changelog-item {
+    margin-bottom: 22px;
+  }
+
+  .changelog-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .changelog-version {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+
+  .changelog-list {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .changelog-list li {
+    font-size: 13px;
+    color: var(--tx2);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .changelog-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--tx3);
+  }
+
+  /* Contact modal 列表 */
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .contact-item {
+    display: flex;
+    width: 100%;
+    font-family: inherit;
+    text-align: left;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--tx);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  .contact-item:hover {
+    background: var(--surface);
+    border-color: var(--line);
+    transform: translateY(-1px);
+  }
+  .contact-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface2);
+    flex-shrink: 0;
+  }
+  .contact-icon svg { width: 18px; height: 18px; opacity: 0.8; }
+  .contact-info { flex: 1; }
+  .contact-label { font-size: 12px; color: var(--tx2); margin-bottom: 2px; }
+  .contact-value { font-size: 14px; color: var(--tx); font-weight: 500; word-break: break-all; }
+
+  @media (max-width: 480px) {
+    body { padding: 48px 16px; }
+    .name { font-size: 20px; }
+    .modal { padding: 20px; }
+  }
+
+  .feat-block{width:100%;max-width:500px;margin-top:34px}
+  .blk-title{font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--amber);padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .feat-item{display:flex;gap:14px;padding:16px 10px;border-bottom:1px solid var(--line)}
+  .feat-num{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--tx2);padding-top:2px;min-width:20px}
+  .feat-name{font-size:14.5px;font-weight:600;color:var(--tx)}
+  .feat-desc{font-size:12.5px;color:var(--tx2);margin-top:2px;line-height:1.6}
+  /* 下载关闭态 */
+  .link-btn.off{
+    opacity:.45;cursor:not-allowed;
+  }
+  .link-btn.off:hover{
+    background:var(--surface);border-color:var(--line);transform:none;
+  }
+  .link-btn .off-tip{font-size:12px;color:var(--tx2)}
+
+  /* padding 把触摸命中区撑到 ~34px 高，top/left 相应回退，视觉位置不变 */
+  .portal-back{position:fixed;top:14px;left:12px;z-index:500;color:var(--tx2);text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:13px;transition:color .2s;padding:9px 10px;min-height:34px;display:inline-flex;align-items:center;border-radius:10px}
+  .portal-back:hover{color:var(--tx)}
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+
+  <a class="portal-back" href="..">← 返回主站</a>
+  <img class="avatar" src="assets/app_icon.png" alt="桌面宠物" onerror="this.onerror=null;this.style.visibility='hidden'">
+  <div class="name">桌面宠物</div>
+  <div class="bio">让可爱的小宠物陪你度过每一个工作日</div>
+  <div class="version">v1.0.3</div>
+  <div class="tags">
+    <span class="tag">Windows</span>
+    <span class="tag">Python</span>
+    <span class="tag">开源</span>
+    <span class="tag">轻量</span>
+  </div>
+
+  <div class="links">
+    <a class="link-btn" id="dlBtn" href="download.html">
+      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span class="link-text" id="dlText">下载地址</span>
+      <span class="link-arrow" id="dlArrow">→</span>
+    </a>
+    <button class="link-btn" type="button" id="changelogBtn">
+      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      <span class="link-text">更新日志</span>
+      <span class="link-arrow">→</span>
+    </button>
+    <button class="link-btn" type="button" id="contactBtn">
+      <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span class="link-text">联系作者</span>
+      <span class="link-arrow">→</span>
+    </button>
+  </div>
+
+
+
+  <div class="feat-block">
+    <div class="blk-title">功 能</div>
+    <div class="feat-item" data-reveal><span class="feat-num">01</span><div><div class="feat-name">走动与待机</div><div class="feat-desc">静止时自动慢速游走，走到屏幕边缘会识别为障碍并转身</div></div></div>
+    <div class="feat-item" data-reveal><span class="feat-num">02</span><div><div class="feat-name">跟随鼠标</div><div class="feat-desc">多只宠物在光标周围环形排开，各自占一个位置</div></div></div>
+    <div class="feat-item" data-reveal><span class="feat-num">03</span><div><div class="feat-name">右键菜单</div><div class="feat-desc">微软风格菜单：调整大小、喂饭、聚拢、分散、退出</div></div></div>
+    <div class="feat-item" data-reveal><span class="feat-num">04</span><div><div class="feat-name">左键拖拽</div><div class="feat-desc">可直接把宠物拖到任意位置，拖拽时暂停跟随</div></div></div>
+    <div class="feat-item" data-reveal><span class="feat-num">05</span><div><div class="feat-name">双屏支持</div><div class="feat-desc">自动识别所有显示器，宠物能在多屏之间自由移动</div></div></div>
+    <div class="feat-item" data-reveal><span class="feat-num">06</span><div><div class="feat-name">明暗主题</div><div class="feat-desc">跟随 Windows 系统主题自动切换，也可手动指定</div></div></div>
+  </div>
+
+
+  <!-- Changelog Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">更新日志</span>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div id="changelogContent"></div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contactOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">联系作者</span>
+        <button class="modal-close" id="contactClose">✕</button>
+      </div>
+      <div class="contact-list">
+        <a class="contact-item" href="mailto:1583398311@163.com">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <div class="contact-label">邮箱</div>
+            <div class="contact-value">1583398311@163.com</div>
+          </div>
+        </a>
+        <button class="contact-item" type="button" id="contactQQ" title="点击复制 QQ 号">
+          <div class="contact-icon">
+            <svg viewBox="0 0 448 512" fill="currentColor">
+              <path d="M433.754 420.445c-11.526 1.393-44.86-52.741-44.86-52.741 0 31.345-16.136 72.247-51.051 101.786 16.039 23.554 19.944 46.953 6.191 67.423-13.755 20.474-36.757 24.029-53.576 24.029-25.895 0-42.372-10.24-49.497-24.029-3.844-7.458-4.644-15.473-4.644-22.871 0-8.072 2.126-16.299 5.764-23.535-27.886 11.496-60.186 11.496-88.071 0 3.638 7.236 5.764 15.464 5.764 23.535 0 7.398-.8 15.413-4.644 22.871-7.124 13.789-23.601 24.029-49.496 24.029-16.82 0-39.822-3.555-53.577-24.029-13.752-20.47-9.848-43.868 6.19-67.423-34.915-29.539-51.05-70.441-51.05-101.786 0 0-33.334 54.134-44.859 52.741 0 0-3.943-2.508-3.943-6.172 0-1.965.395-3.961 1.573-6.205 1.574-2.996 8.182-7.528 15.12-11.337 13.544-7.434 33.09-13.392 44.21-17.85 8.226-3.303 8.226-8.951 8.226-8.951s-3.691-4.659-5.63-9.795c-3.464-9.19-3.975-26.055 1.431-41.895 3.218-9.443 8.311-15.938 13.348-20.141 0-9.138 1.966-26.458 11.115-36.472 8.909-9.748 22.722-13.557 37.047-13.557 5.056 0 10.373.742 15.538 2.174 10.159-11.051 22.985-15.711 38.018-15.711 15.032 0 27.858 4.66 38.018 15.711 5.165-1.432 10.482-2.174 15.537-2.174 14.326 0 28.139 3.809 37.048 13.557 9.149 10.014 11.114 27.334 11.114 36.472 5.037 4.203 10.13 10.698 13.349 20.141 5.406 15.84 4.894 32.705 1.43 41.895-1.938 5.136-5.629 9.795-5.629 9.795s0 5.648 8.226 8.951c11.12 4.458 30.666 10.416 44.21 17.85 6.938 3.809 13.546 8.341 15.12 11.337 1.178 2.244 1.572 4.24 1.572 6.205 0 3.664-3.942 6.172-3.942 6.172z"/>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <div class="contact-label">QQ</div>
+            <div class="contact-value" id="contactQQValue">3821888622（点击复制）</div>
+          </div>
+        </button>
+        <a class="contact-item" href="https://github.com/jasonyzk666/desktop-pet/issues" target="_blank" rel="noopener">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.05-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.84 2.81 1.3 3.5 1 .11-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.48 5.92.43.37.81 1.1.81 2.22 0 1.61-.01 2.9-.01 3.29 0 .32.22.7.83.58A12.01 12.01 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </div>
+          <div class="contact-info">
+            <div class="contact-label">GitHub</div>
+            <div class="contact-value">@jasonyzk666</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ↓↓↓ 下载开关：恢复下载时把 DOWNLOAD_OPEN 改成 true ↓↓↓ */
+    var DOWNLOAD_OPEN = false;
+    (function(){
+      var btn = document.getElementById('dlBtn');
+      if(DOWNLOAD_OPEN) return;                       // 开放时保持原样（正常跳转 download.html）
+      btn.classList.add('off');
+      btn.removeAttribute('href');
+      btn.setAttribute('aria-disabled','true');
+      btn.setAttribute('title','下载暂未开放');
+      document.getElementById('dlText').textContent = '下载地址（暂未开放）';
+      document.getElementById('dlArrow').textContent = '敬请期待';
+      btn.addEventListener('click', function(e){ e.preventDefault(); });
+    })();
+
+    const changelog = [
+      {
+        version: "v1.0.3",
+        date: "",
+        changes: [
+          "新增软件图标与托盘图标"
+        ]
+      },
+      {
+        version: "v1.0.2",
+        date: "",
+        changes: [
+          "修复右键菜单重复项"
+        ]
+      },
+      {
+        version: "v1.0.1",
+        date: "",
+        changes: [
+          "修复浅色模式下文字颜色异常"
+        ]
+      },
+      {
+        version: "v1.0.0",
+        date: "",
+        changes: [
+          "新增微软风格右键菜单",
+          "新增设置窗口（走动/停止、跟随、暂停、点击穿透等）",
+          "新增明暗主题切换，跟随系统主题"
+        ]
+      },
+      {
+        version: "v0.9.0",
+        date: "",
+        changes: [
+          "更换眼镜样式"
+        ]
+      },
+      {
+        version: "v0.8.0",
+        date: "",
+        changes: [
+          "跟随模式下宠物追到目标后停止移动",
+          "跟随时近距自动减速",
+          "新增左键拖拽宠物",
+          "拖拽时禁用跟随移动",
+          "喂饭按钮在走动/拖拽时禁用"
+        ]
+      },
+      {
+        version: "v0.7.0",
+        date: "",
+        changes: [
+          "修复动画帧重复问题",
+          "修复窗口尺寸变化后动画不更新"
+        ]
+      },
+      {
+        version: "v0.6.0",
+        date: "",
+        changes: [
+          "新增双显示器支持，宠物可在多屏间自由移动"
+        ]
+      },
+      {
+        version: "v0.5.0",
+        date: "",
+        changes: [
+          "新增跟随鼠标模式，多宠物在光标周围环形排列"
+        ]
+      },
+      {
+        version: "v0.4.0",
+        date: "",
+        changes: [
+          "修复聚拢/分散按钮失效",
+          "宠物静止时自动慢速游走",
+          "头发缩短",
+          "修复走到边缘前就转身的问题"
+        ]
+      },
+      {
+        version: "v0.3.0",
+        date: "",
+        changes: [
+          "识别窗口边缘为障碍物"
+        ]
+      },
+      {
+        version: "v0.2.0",
+        date: "",
+        changes: [
+          "修复走路动画抽搐问题"
+        ]
+      },
+      {
+        version: "v0.1.0",
+        date: "",
+        changes: [
+          "写实人像桌面宠物登场"
+        ]
+      },
+      {
+        version: "v0.0.0",
+        date: "",
+        changes: [
+          "初版发布"
+        ]
+      }
+    ];
+
+    const content = document.getElementById('changelogContent');
+    content.innerHTML = changelog.map(item => `
+      <div class="changelog-item">
+        <div class="changelog-version">${item.version}</div>
+        <ul class="changelog-list">
+          ${item.changes.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+
+    const overlay = document.getElementById('modalOverlay');
+    const btn = document.getElementById('changelogBtn');
+    const closeBtn = document.getElementById('modalClose');
+
+    btn.addEventListener('click', () => overlay.classList.add('active'));
+    closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+
+    const contactOverlay = document.getElementById('contactOverlay');
+    const contactBtn = document.getElementById('contactBtn');
+    const contactCloseBtn = document.getElementById('contactClose');
+
+    contactBtn.addEventListener('click', () => contactOverlay.classList.add('active'));
+    contactCloseBtn.addEventListener('click', () => contactOverlay.classList.remove('active'));
+    contactOverlay.addEventListener('click', (e) => {
+      if (e.target === contactOverlay) contactOverlay.classList.remove('active');
+    });
+
+    // QQ 号一键复制
+    const contactQQ = document.getElementById('contactQQ');
+    const contactQQValue = document.getElementById('contactQQValue');
+    const QQ_NUM = '3821888622';
+    contactQQ.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(QQ_NUM);
+        contactQQValue.textContent = '已复制 ✓';
+        setTimeout(() => { contactQQValue.textContent = QQ_NUM + '（点击复制）'; }, 2000);
+      } catch (e) {
+        contactQQValue.textContent = '复制失败，请手动复制: ' + QQ_NUM;
+      }
+    });
+  </script>
+
+
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+</body>
+</html>

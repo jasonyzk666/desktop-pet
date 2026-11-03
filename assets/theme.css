@@ -1,0 +1,287 @@
+/* ===========================================================
+   全站统一配色 + 时间显示 + 深浅模式开关
+   - 本文件必须在各页面自身 <style> 之后加载，
+     才能统一覆盖页面原有的 :root 变量（同特异性，后者胜）
+   - 主题由 <html data-theme="light|dark"> 驱动
+   =========================================================== */
+
+:root{
+  --bg:#fbfbf9;
+  --surface:#ffffff;
+  --surface2:#f2f1ec;
+  --tx:#17171a;
+  --tx2:#5f5f66;
+  --tx3:#64646d;
+  --line:#e4e3dd;
+  --accent:#4438ca;
+  --accent-soft:rgba(68,56,202,.10);
+  --shadow:0 8px 26px rgba(20,20,40,.07);
+  /* 兼容各页面已有的变量名 */
+  --card:#ffffff;
+  --blue:#1d4ed8;
+  --amber:#8a4d00;
+  --green:#178045;
+  --mono:ui-monospace,"SF Mono",Consolas,monospace;
+  /* 实底蓝（用于白字底块，不随主题变亮变浅，保证白字对比 ≥4.5） */
+  --blue-solid:#2f5bd0;
+  /* 强调红的"可读档"：用在浅红底的文字上，避免对比不足 */
+  --red-ink:#c81e1e;
+  /* 首页作品卡图标底色 */
+  --ic-blue:#e8f3fa;
+  --ic-purple:#f1ecfd;
+  --ic-green:#e8f8ee;
+  --ic-amber:#fdf4e0;
+  --ic-rose:#fdeef1;
+  /* 搜索引擎原理页：各主题色的浅底 / 边框变体 */
+  --blue-l:#e8f0ff;   --blue-b:#cfe0ff;
+  --amber-l:#fff5e0;  --amber-b:#fbe3b0;
+  --green-l:#e5f8f1;  --green-b:#a7f0d3;
+  --red-l:#feeceb;    --red-b:#fbd5d2;
+  --purple-l:#f1e9ff; --purple-b:#ddd0ff;
+  --purple:#7c3aed;
+  --red:#ef4444;
+  --amber-2:#ea7317;
+  --sh:0 2px 10px rgba(20,35,70,.06), 0 8px 24px rgba(20,35,70,.05);
+}
+
+html[data-theme="dark"]{
+  --bg:#0d0e12;
+  --surface:#16181e;
+  --surface2:#1e2129;
+  --tx:#e9e9ee;
+  --tx2:#a8aab4;
+  --tx3:#9a9ca8;
+  --line:#2a2d35;
+  --accent:#9d92ff;
+  --accent-soft:rgba(157,146,255,.15);
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --card:#16181e;
+  --blue:#7aa2ff;
+  --amber:#f0b429;
+  --green:#4ec97e;
+  --blue-solid:#3b5bdb;
+  --red-ink:#f87171;
+  --ic-blue:#1b2a3c;
+  --ic-purple:#262040;
+  --ic-green:#16301f;
+  --ic-amber:#33290f;
+  --ic-rose:#33212a;
+  --blue-l:#1b2a44;   --blue-b:#2f4468;
+  --amber-l:#3a2f14;  --amber-b:#5c4a1e;
+  --green-l:#14352a;  --green-b:#25604a;
+  --red-l:#3d1f1e;    --red-b:#6b3230;
+  --purple-l:#2a2145; --purple-b:#4a3d80;
+  --purple:#a78bfa;
+  --red:#f87171;
+  --amber-2:#c98a12;
+  --sh:0 2px 10px rgba(0,0,0,.30), 0 8px 24px rgba(0,0,0,.24);
+}
+
+/* 深色下图标描边提亮，避免深色底上看不清 */
+html[data-theme="dark"] .ic-blue   svg{stroke:#7aa2ff}
+html[data-theme="dark"] .ic-purple svg{stroke:#a78bfa}
+html[data-theme="dark"] .ic-green  svg{stroke:#4ec97e}
+/* 游戏卡片的暖色图标同样需要提亮 */
+html[data-theme="dark"] .ic-amber  svg{stroke:#f0b429}
+html[data-theme="dark"] .ic-rose   svg{stroke:#fb7185}
+
+/* 主题切换时的整体过渡（不含背景色的首屏闪烁，首屏由内联脚本提前定色） */
+html.theme-ready body{
+  transition:background-color .28s ease,color .28s ease;
+}
+@media (prefers-reduced-motion: reduce){
+  html.theme-ready body{transition:none}
+}
+
+/* ---------- 时间 + 主题开关 组件 ---------- */
+/* 默认：fixed 悬浮（仅用于右上角无内容的页面：宠物两页 / 404）
+   z-index 高于页面弹窗遮罩（999），保证弹窗打开时也能切换主题 */
+.tbar{
+  position:fixed;
+  top:16px; right:16px;
+  z-index:1200;
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--mono);
+  pointer-events:auto;
+}
+/* 嵌入模式：放进页面自己的顶栏，随文档流排布，绝不遮挡内容 */
+.tbar.tbar-inline{
+  position:static;
+  margin-left:auto;
+  flex:none;
+}
+.tbar .tpill{
+  position:relative; z-index:1;          /* 层级高于开关的扩展命中区，避免误触 */
+  background:color-mix(in srgb, var(--surface) 82%, transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid var(--line);
+  border-radius:99px;
+  color:var(--tx);
+  font-size:13px; font-weight:600;
+  padding:9px 18px;
+  line-height:1.35;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+  letter-spacing:.4px;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+html[data-theme="dark"] .tbar .tpill{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.tbar .tpill.t-sec{color:var(--accent);min-width:96px;text-align:center}
+.tbar .t-week,.tbar .t-date{color:var(--tx2)}
+
+/* 开关：默认 32px，与 13px 胶囊等高协调 */
+.ttoggle{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px; flex:none;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:color-mix(in srgb, var(--surface) 82%, transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(160%);
+  backdrop-filter:blur(14px) saturate(160%);
+  color:var(--tx);
+  cursor:pointer;
+  padding:0;
+  box-shadow:0 2px 10px rgba(0,0,0,.05);
+  transition:transform .18s ease,border-color .18s ease,background-color .18s ease,color .18s ease;
+}
+html[data-theme="dark"] .ttoggle{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.ttoggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.ttoggle:active{transform:scale(.93)}
+.ttoggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* 触摸命中区补足到 44×44（视觉尺寸不变）——WCAG 2.5.5 / iOS HIG */
+.ttoggle{position:relative}
+.ttoggle::after{
+  content:"";position:absolute;left:50%;top:50%;
+  width:44px;height:44px;transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+.ttoggle .i-moon{display:none}
+html[data-theme="dark"] .ttoggle .i-sun{display:none}
+html[data-theme="dark"] .ttoggle .i-moon{display:block}
+.ttoggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* 首页：三胶囊是 16px 字 / 43px 高，开关放大到同档，避免"小圆配大胶囊" */
+.pills .ttoggle{width:44px;height:44px}
+.pills .ttoggle svg{width:20px;height:20px}
+
+/* 小屏：悬浮组件收窄；嵌入组件同样收紧 */
+@media (max-width:560px){
+  .tbar{top:12px;right:12px;gap:6px}
+  .tbar .t-week,.tbar .t-date{display:none}
+  .tbar .tpill{font-size:12px;padding:5px 11px}
+  .tbar .tpill.t-sec{min-width:78px}
+  .ttoggle{width:30px;height:30px}
+  .ttoggle svg{width:15px;height:15px}
+  .pills .ttoggle{width:34px;height:34px}
+  .pills .ttoggle svg{width:16px;height:16px}
+}
+
+/* ===========================================================
+   统一框体规范：圆角 / 内距 / 间距 —— iOS 26 风格
+   =========================================================== */
+:root{
+  --r-card:22px;   /* 卡片 */
+  --r-box:16px;    /* 按钮 / 列表项 */
+  --r-in:14px;     /* 卡片内的小框 */
+}
+
+/* --- 圆角：统一到 iOS 风大圆弧 --- */
+.card{border-radius:var(--r-card)}
+.btn,.link-btn,.dl-item,.shot{border-radius:var(--r-box)}
+.card .ic{border-radius:20px}
+.card .ic img{border-radius:15px}
+.avatar{border-radius:28px}
+
+/* --- iOS 26 连续曲率（R 形边 / squircle）---
+   支持 corner-shape 的浏览器（Chrome 139+/Safari 26+）得到真正的
+   连续曲率圆角；不支持的浏览器自动退回上面的普通圆弧，视觉不受损 */
+@supports (corner-shape: squircle){
+  .card,.btn,.link-btn,.dl-item,.shot,.tag,.pill,.tpill,.ttoggle,
+  .card .ic,.card .ic img,.avatar,.chip,.contact-item,.feat-item,
+  .contact a,.contact button,.back,.portal-back,.ic,.dl-icon,.ks{
+    corner-shape:squircle;
+  }
+}
+
+/* ===========================================================
+   浏览器兼容回退（老版本 / 小众内核）
+   =========================================================== */
+/* 不支持 color-mix()：用半透明实色保证组件可读、不发灰 */
+@supports not (background: color-mix(in srgb, red 50%, transparent)){
+  .tbar .tpill,.ttoggle{background:rgba(255,255,255,.9)}
+  html[data-theme="dark"] .tbar .tpill,
+  html[data-theme="dark"] .ttoggle{background:rgba(26,28,36,.9)}
+}
+/* 不支持 flex gap：补 margin，避免框贴框 */
+@supports not (gap:8px){
+  .tbar>*{margin-left:8px}
+  .tbar>*:first-child{margin-left:0}
+  .pills>*{margin:0 0 0 10px}
+  .pills>*:first-child{margin-left:0}
+  .links>*{margin-bottom:12px}
+  .dl-list>*{margin-bottom:12px}
+}
+/* 长串（网址 / 长英文单词）不撑破布局 —— 只在放不下时才断，不影响正常换行 */
+body{overflow-wrap:break-word}
+
+/* button 默认文字色兜底：<button> 的 UA 默认色是黑色，
+   深色模式下会出现深底黑字（如 seo 页用 font:inherit 却没设 color 的选项按钮） */
+button,input[type="submit"],input[type="button"]{color:var(--tx)}
+
+/* 媒体元素不溢出 */
+img,video{max-width:100%;height:auto}
+svg{max-width:100%}
+/* iOS 横屏字号自动放大的老行为关掉，避免布局错乱 */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+/* ===========================================================
+   各种屏幕尺寸
+   =========================================================== */
+/* 超小屏（≤360px：iPhone SE / 老安卓） */
+@media (max-width:360px){
+  .tbar{top:10px;right:10px;gap:5px}
+  .tbar .tpill{font-size:11.5px;padding:6px 11px}
+  .tbar .tpill.t-sec{min-width:72px}
+  .ttoggle{width:30px;height:30px}
+  .ttoggle svg{width:15px;height:15px}
+  .pills .ttoggle{width:34px;height:34px}
+  .pills .ttoggle svg{width:16px;height:16px}
+}
+/* 手机横屏（矮屏）：时间组件收窄，避免占满整行 */
+@media (max-height:480px) and (orientation:landscape){
+  .tbar{top:8px;right:10px;gap:6px}
+  .tbar .t-week,.tbar .t-date{display:none}
+  .tbar .tpill{font-size:12px;padding:6px 12px}
+  .ttoggle{width:32px;height:32px}
+}
+/* 平板竖屏（601–1024px）：中间档，别用手机那套挤布局 */
+@media (min-width:601px) and (max-width:1024px){
+  .tbar{top:18px;right:20px}
+}
+/* 大屏（≥1600px）：组件整体放大一档，避免在宽屏上显得过小 */
+@media (min-width:1600px){
+  .tbar{top:24px;right:28px;gap:11px}
+  .tbar .tpill{font-size:14px;padding:9px 19px}
+  .ttoggle{width:40px;height:40px}
+  .ttoggle svg{width:19px;height:19px}
+}
+/* 超大屏（≥2200px）：再放大一点 */
+@media (min-width:2200px){
+  .tbar{top:30px;right:36px;gap:13px}
+  .tbar .tpill{font-size:15px;padding:10px 21px}
+  .ttoggle{width:44px;height:44px}
+  .ttoggle svg{width:21px;height:21px}
+}
+
+/* 深色模式下，反色 logo 的亮块过于刺眼：改用卡片底色 + 主文字色描边 */
+html[data-theme="dark"] .logo{background:var(--surface2)!important}
+html[data-theme="dark"] .logo svg{stroke:var(--tx)!important}
+
+/* 深色模式下强调色是亮色（蓝 #7aa2ff / 橙 #f0b429），
+   作为按钮底色配白字对比只有 1.86~2.49（几乎看不清）。
+   这里为「实心强调按钮」单独指定深色底，保持白字清晰。 */
+html[data-theme="dark"] .btn.primary{background:#3b5bdb;border-color:#3b5bdb;color:#fff}
+html[data-theme="dark"] .btn.amber{background:#a16207;border-color:#a16207;color:#fff}
+html[data-theme="dark"] .btn.primary:hover,
+html[data-theme="dark"] .btn.amber:hover{filter:brightness(1.1)}

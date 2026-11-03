@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>贪吃蛇 · 网页小游戏 · jasonyzk</title>
+<link rel="icon" type="image/png" href="/assets/icons/pet.png">
+<meta name="theme-color" content="#fbfbf9">
+<meta name="description" content="经典贪吃蛇，支持键盘、滑动与方向键操作，含金豆奖励与穿墙模式。">
+<link rel="canonical" href="https://pet-33t.pages.dev/snake/">
+<link rel="apple-touch-icon" href="/assets/icons/pet.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="贪吃蛇 · 网页小游戏">
+<meta property="og:description" content="方向键或滑动操作，吃满屏、拿金豆、挑战最高分。">
+<meta property="og:url" content="https://pet-33t.pages.dev/snake/">
+<meta property="og:image" content="https://pet-33t.pages.dev/assets/icons/pet.png">
+<meta name="twitter:card" content="summary">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:auto}
+body{
+  background:var(--bg);color:var(--tx);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.topbar{
+  padding:22px 4vw 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:13px;
+}
+.topbar > span{margin-left:auto}
+.back{color:var(--tx2);transition:color .15s;display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;margin:-7px -9px;border-radius:10px}
+.back:hover{color:var(--tx)}
+
+.wrap{max-width:640px;margin:0 auto;padding:24px 4vw 60px}
+h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
+.lead{margin-top:10px;color:var(--tx2);font-size:15px;line-height:1.8}
+
+.hud{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.hud div{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:12px 10px;text-align:center;
+}
+.hud b{display:block;font-size:clamp(18px,4.4vw,24px);font-variant-numeric:tabular-nums}
+.hud span{display:block;margin-top:4px;font-size:12px;color:var(--tx3)}
+.hud .hi b{color:var(--accent)}
+
+.board{
+  margin-top:18px;display:flex;justify-content:center;
+}
+canvas{
+  display:block;width:100%;max-width:520px;aspect-ratio:1/1;height:auto;
+  border-radius:18px;border:1px solid var(--line);background:var(--surface);
+  touch-action:manipulation;   /* 未开局时允许滑动页面 */
+}
+/* 只有真正在跑的时候才拦截手势，避免手指落在棋盘上就滑不动页面 */
+canvas.playing{touch-action:none}
+.msg{
+  margin-top:14px;text-align:center;font-size:15px;min-height:24px;color:var(--tx2);
+}
+.msg b{color:var(--tx)}
+
+.bar{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+.btn{
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  padding:12px 24px;border-radius:99px;border:1px solid var(--line);
+  background:var(--surface);color:var(--tx);min-height:46px;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+}
+.btn:hover{border-color:var(--tx3);box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+
+.opt{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;color:var(--tx2);
+  min-height:44px;padding:6px 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.opt input{width:24px;height:24px;flex:none;accent-color:var(--accent);cursor:pointer}
+
+/* 移动端方向键 */
+.pad{
+  margin:18px auto 0;width:210px;display:none;
+  grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.pad button{
+  font:inherit;font-size:20px;min-height:56px;min-width:56px;border-radius:14px;
+  border:1px solid var(--line);background:var(--surface);color:var(--tx);cursor:pointer;
+}
+.pad button:active{background:var(--surface2)}
+.pad .up{grid-column:2}
+.pad .left{grid-column:1;grid-row:2}
+.pad .down{grid-column:2;grid-row:2}
+.pad .right{grid-column:3;grid-row:2}
+.pad .sp{grid-row:1;grid-column:1}
+.pad .sp2{grid-row:1;grid-column:3}
+
+.tips{
+  margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 22px;
+}
+.tips h2{font-size:16px;margin-bottom:8px}
+.tips li{font-size:14px;color:var(--tx2);line-height:1.9;margin-left:18px}
+
+/* 触屏设备或窄屏一律显示方向键（不依赖 hover/pointer 探测） */
+@media(max-width:820px), (hover:none) and (pointer:coarse){ .pad{display:grid} }
+@media(max-width:560px){
+  .topbar{padding:16px 4vw 0}
+  .wrap{padding:18px 4vw 48px}
+  .btn{flex:1 1 auto;min-width:110px}
+  .tips{padding:15px 17px}
+}
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261103">
+<link rel="stylesheet" href="../assets/theme.css?v=20261103">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261103">
+</head>
+<body>
+
+<div class="topbar" data-theme-slot>
+  <a class="back" href="../">← 返回主站</a>
+  <span style="color:var(--tx3)">Web Game · 经典街机</span>
+</div>
+
+<div class="wrap">
+  <h1>贪吃蛇</h1>
+  <p class="lead">吃到豆子就变长，撞墙或咬到自己就结束。每吃 5 颗会掉落一颗金豆，金豆限时，值得一搏。</p>
+
+  <div class="hud">
+    <div><b id="hScore">0</b><span>当前得分</span></div>
+    <div><b id="hLen">3</b><span>蛇身长度</span></div>
+    <div class="hi"><b id="hBest">0</b><span>最高分</span></div>
+  </div>
+
+  <div class="board">
+    <canvas id="cv" width="520" height="520" aria-label="贪吃蛇游戏画面"></canvas>
+  </div>
+
+  <p class="msg" id="msg">按 <b>空格</b> 或点「开始」进入游戏</p>
+
+  <div class="bar">
+    <button class="btn primary" id="btnStart" type="button">开始</button>
+    <button class="btn" id="btnPause" type="button">暂停</button>
+    <button class="btn" id="btnRestart" type="button">重来</button>
+  </div>
+
+  <div class="pad">
+    <span class="sp"></span>
+    <button class="up" type="button" data-dir="up" aria-label="向上">↑</button>
+    <span class="sp2"></span>
+    <button class="left" type="button" data-dir="left" aria-label="向左">←</button>
+    <button class="down" type="button" data-dir="down" aria-label="向下">↓</button>
+    <button class="right" type="button" data-dir="right" aria-label="向右">→</button>
+  </div>
+
+  <label class="opt"><input type="checkbox" id="wrapMode"> 穿墙模式（从边缘穿到对面）</label>
+
+  <div class="tips">
+    <h2>操作与规则</h2>
+    <ol>
+      <li>方向键或 WASD 控制方向，手机直接在画面上滑动，也能用下面的方向键。</li>
+      <li>普通豆子 +1 分，金色豆子 +5 分且多长两节，金豆出现几秒后会消失。</li>
+      <li>撞到墙壁或自己的身体就结束；开启穿墙模式后可以从边缘穿过去。</li>
+      <li>空格键开始 / 暂停，P 键也能暂停。最高分保存在本机。</li>
+    </ol>
+  </div>
+</div>
+
+<script src="../assets/theme.js?v=20261103" defer></script>
+<script src="../assets/motion.js?v=20261103" defer></script>
+<script src="../assets/glass.js?v=20261103" defer></script>
+<script>
+(function(){
+  var COLS=20, ROWS=20;
+  var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  var hScore=document.getElementById('hScore'), hLen=document.getElementById('hLen'), hBest=document.getElementById('hBest');
+  var msg=document.getElementById('msg');
+  var btnStart=document.getElementById('btnStart'), btnPause=document.getElementById('btnPause'), btnRestart=document.getElementById('btnRestart');
+  var wrapMode=document.getElementById('wrapMode');
+  var KEY='jz-snake-best';
+
+  var cell=26, size=520;
+  var snake, dir, nextDirs, food, gold, goldLeft, score, grow, alive, running, paused, started;
+  var stepMs=140, acc=0, lastT=0, rafId=null;
+
+  /* ---------- 主题配色 ---------- */
+  var C={};
+  function readColors(){
+    var s=getComputedStyle(document.documentElement);
+    function v(n,f){ var x=s.getPropertyValue(n).trim(); return x||f; }
+    C.bg      = v('--surface','#fff');
+    C.grid    = v('--line','#e6e6e6');
+    C.snake   = v('--green','#178045');
+    C.head    = v('--blue-solid','#2f5bd0');
+    C.food    = v('--accent','#4438ca');
+    C.gold    = v('--amber','#8a4d00');
+    C.text    = v('--tx','#111');
+    C.dim     = v('--tx3','#666');
+  }
+  readColors();
+  try{
+    new MutationObserver(function(){ readColors(); draw(); })
+      .observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','data-glass']});
+  }catch(e){}
+
+  /* ---------- 尺寸 ---------- */
+  function resize(){
+    var maxW = Math.min(cv.parentNode.clientWidth || 520, 520);
+    size = Math.max(240, Math.floor(maxW));
+    var dpr = window.devicePixelRatio || 1;
+    cv.style.width = size+'px';
+    cv.style.height = size+'px';
+    cv.width = Math.round(size*dpr);
+    cv.height = Math.round(size*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cell = size/COLS;
+    draw();
+  }
+  window.addEventListener('resize', resize);
+
+  /* ---------- 游戏状态 ---------- */
+  function best(){ try{ var v=parseInt(localStorage.getItem(KEY),10); return isNaN(v)?0:v; }catch(e){ return 0; } }
+  function saveBest(v){ try{ localStorage.setItem(KEY,String(v)); }catch(e){} }
+
+  function reset(){
+    snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];
+    dir={x:1,y:0}; nextDirs=[];
+    score=0; grow=0; gold=null; goldLeft=0;
+    alive=true; running=false; paused=false; started=false;
+    stepMs=140; acc=0;
+    placeFood();
+    updateHUD();
+  }
+
+  function placeFood(){
+    var free=[];
+    for(var y=0;y<ROWS;y++) for(var x=0;x<COLS;x++){
+      if(!occupied(x,y)) free.push({x:x,y:y});
+    }
+    if(!free.length){ food=null; return; }
+    food=free[Math.floor(Math.random()*free.length)];
+  }
+  function placeGold(){
+    var free=[];
+    for(var y=0;y<ROWS;y++) for(var x=0;x<COLS;x++){
+      if(!occupied(x,y)&&!(food&&food.x===x&&food.y===y)) free.push({x:x,y:y});
+    }
+    if(!free.length) return;
+    gold=free[Math.floor(Math.random()*free.length)];
+    goldLeft=7000;   // 金豆存活时间（ms）
+  }
+  function occupied(x,y){
+    for(var i=0;i<snake.length;i++) if(snake[i].x===x&&snake[i].y===y) return true;
+    return false;
+  }
+
+  function updateHUD(){
+    hScore.textContent=score;
+    hLen.textContent=snake.length;
+    hBest.textContent=best();
+  }
+
+  /* ---------- 绘制 ---------- */
+  function rrect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function draw(){
+    if(!ctx) return;
+    ctx.clearRect(0,0,size,size);
+    // 底
+    ctx.fillStyle=C.bg;
+    rrect(0,0,size,size,16);
+    // 格子线（很淡）
+    ctx.strokeStyle=C.grid; ctx.globalAlpha=.5; ctx.lineWidth=1;
+    for(var i=1;i<COLS;i++){
+      ctx.beginPath(); ctx.moveTo(i*cell,0); ctx.lineTo(i*cell,size); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*cell); ctx.lineTo(size,i*cell); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    // 食物
+    if(food){
+      ctx.fillStyle=C.food;
+      ctx.beginPath();
+      ctx.arc(food.x*cell+cell/2, food.y*cell+cell/2, cell*0.30, 0, Math.PI*2);
+      ctx.fill();
+    }
+    // 金豆
+    if(gold){
+      ctx.fillStyle=C.gold;
+      ctx.beginPath();
+      ctx.arc(gold.x*cell+cell/2, gold.y*cell+cell/2, cell*0.34, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha=.35;
+      ctx.beginPath();
+      ctx.arc(gold.x*cell+cell/2, gold.y*cell+cell/2, cell*0.52, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha=1;
+    }
+
+    // 蛇
+    for(var i=snake.length-1;i>=0;i--){
+      var s=snake[i];
+      var pad=cell*0.10, r=cell*0.30;
+      ctx.fillStyle = (i===0)?C.head:C.snake;
+      ctx.globalAlpha = (i===0)?1:(0.62+0.38*(1-i/snake.length));
+      rrect(s.x*cell+pad, s.y*cell+pad, cell-pad*2, cell-pad*2, r);
+    }
+    ctx.globalAlpha=1;
+
+    // 覆盖提示
+    if(!started||!alive||paused){
+      ctx.fillStyle=C.bg; ctx.globalAlpha=.78;
+      rrect(0,0,size,size,16);
+      ctx.globalAlpha=1;
+      ctx.fillStyle=C.text;
+      ctx.textAlign='center';
+      var t1,t2;
+      if(!alive){ t1='游戏结束'; t2='得分 '+score+' · 点「重来」再来一局'; }
+      else if(paused){ t1='已暂停'; t2='按空格或点「暂停」继续'; }
+      else { t1='贪吃蛇'; t2='按空格或点「开始」'; }
+      ctx.font='700 '+Math.round(size*0.075)+'px -apple-system,"PingFang SC",sans-serif';
+      ctx.fillText(t1, size/2, size/2 - size*0.02);
+      ctx.fillStyle=C.dim;
+      ctx.font='400 '+Math.round(size*0.038)+'px -apple-system,"PingFang SC",sans-serif';
+      ctx.fillText(t2, size/2, size/2 + size*0.055);
+    }
+  }
+
+  /* ---------- 逻辑 ---------- */
+  function turn(nx,ny){
+    if(!alive||!running||paused) return;
+    var last = nextDirs.length ? nextDirs[nextDirs.length-1] : dir;
+    if(last.x===-nx && last.y===-ny) return;      // 不能直接掉头
+    if(last.x===nx && last.y===ny) return;
+    if(nextDirs.length<2) nextDirs.push({x:nx,y:ny});
+  }
+
+  function step(){
+    if(nextDirs.length) dir=nextDirs.shift();
+    var head=snake[0];
+    var nx=head.x+dir.x, ny=head.y+dir.y;
+
+    if(wrapMode.checked){
+      if(nx<0) nx=COLS-1; else if(nx>=COLS) nx=0;
+      if(ny<0) ny=ROWS-1; else if(ny>=ROWS) ny=0;
+    }else if(nx<0||nx>=COLS||ny<0||ny>=ROWS){
+      die(); return;
+    }
+    // 撞自己（尾巴那一格会让开，不算撞）
+    var willTail = (grow===0);
+    for(var i=0;i<snake.length;i++){
+      if(i===snake.length-1 && willTail) continue;
+      if(snake[i].x===nx && snake[i].y===ny){ die(); return; }
+    }
+
+    snake.unshift({x:nx,y:ny});
+    // 吃到东西时本步不 pop（长度 +1）；grow 只记"额外"还要多长的节数
+    if(food && nx===food.x && ny===food.y){
+      score++;
+      if(score%5===0) placeGold();
+      placeFood();
+      stepMs=Math.max(72, stepMs-4);
+    }else if(gold && nx===gold.x && ny===gold.y){
+      score+=5; grow+=1;            // 金豆：本步 +1，下一步再多 +1，共 +2
+      gold=null; goldLeft=0;
+      stepMs=Math.max(72, stepMs-4);
+      setMsg('吃到金豆！<b>+5 分</b>');
+    }else if(grow>0){
+      grow--;
+    }else{
+      snake.pop();
+    }
+
+    if(gold){
+      goldLeft-=stepMs;
+      if(goldLeft<=0){ gold=null; goldLeft=0; }
+    }
+    updateHUD();
+  }
+
+  function die(){
+    alive=false; running=false; cancel();
+    cv.classList.remove('playing');
+    btnPause.textContent='暂停';
+    var b=best();
+    if(score>b){ saveBest(score); hBest.textContent=score; setMsg('游戏结束，得分 <b>'+score+'</b> · 🎉 新纪录！'); }
+    else setMsg('游戏结束，得分 <b>'+score+'</b>，最高 '+b);
+    draw();
+  }
+
+  function setMsg(html){ msg.innerHTML=html; }
+
+  function loop(t){
+    if(!running||paused||!alive){ rafId=null; return; }
+    if(!lastT) lastT=t;
+    var dt=t-lastT; lastT=t;
+    // 后台/掉帧后 dt 可能是好几秒，不夹住会一口气走几十步直接撞死
+    if(dt<0) dt=0; else if(dt>stepMs*2) dt=stepMs*2;
+    acc+=dt;
+    var guard=0;
+    while(acc>=stepMs && guard++<4){ acc-=stepMs; step(); if(!alive){ rafId=null; return; } }
+    if(acc>stepMs*4) acc=0;
+    draw();
+    rafId=requestAnimationFrame(loop);
+  }
+  function cancel(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } lastT=0; }
+
+  function start(){
+    if(!alive){ reset(); }
+    if(running&&!paused) return;
+    started=true; running=true; paused=false; lastT=0; acc=0;
+    setMsg('开吃！方向键或滑动控制方向');
+    btnPause.textContent='暂停';
+    cv.classList.add('playing');
+    cancel(); rafId=requestAnimationFrame(loop);
+    draw();
+  }
+  function pause(){
+    if(!running||!alive) return;
+    paused=!paused;
+    btnPause.textContent = paused?'继续':'暂停';
+    setMsg(paused?'已暂停，按空格继续':'继续！');
+    cv.classList.toggle('playing', !paused);
+    if(paused){ cancel(); }
+    else { lastT=0; cancel(); rafId=requestAnimationFrame(loop); }
+    draw();
+  }
+
+  /* ---------- 输入 ---------- */
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    var ae=document.activeElement, tag=ae?ae.tagName:'';
+    // 空格落在按钮/复选框上时交给控件自己处理，否则会「keydown 暂停 + keyup 触发 click 再切一次」等于没反应
+    var onCtl = (tag==='BUTTON'||tag==='A'||tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA');
+    if(k===' '&&onCtl) return;
+
+    if(k==='ArrowUp'||k==='w'||k==='W'){ turn(0,-1); e.preventDefault(); }
+    else if(k==='ArrowDown'||k==='s'||k==='S'){ turn(0,1); e.preventDefault(); }
+    else if(k==='ArrowLeft'||k==='a'||k==='A'){ turn(-1,0); e.preventDefault(); }
+    else if(k==='ArrowRight'||k==='d'||k==='D'){ turn(1,0); e.preventDefault(); }
+    else if(k===' '){
+      e.preventDefault();
+      if(!alive){ restart(); }               // 结束后空格直接重开，而不是毫无反应
+      else if(!running) start();
+      else pause();
+    }
+    else if(k==='p'||k==='P'){ e.preventDefault(); pause(); }
+  });
+
+  // 触摸滑动
+  var sx=0, sy=0, sOn=false;
+  cv.addEventListener('pointerdown',function(e){
+    sOn=true; sx=e.clientX; sy=e.clientY;
+    try{ cv.setPointerCapture(e.pointerId); }catch(err){}   // 手指滑出画布也能继续转向
+  });
+  cv.addEventListener('pointermove',function(e){
+    if(!sOn) return;
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)<26 && Math.abs(dy)<26) return;
+    if(Math.abs(dx)>Math.abs(dy)) turn(dx>0?1:-1,0); else turn(0,dy>0?1:-1);
+    sx=e.clientX; sy=e.clientY;
+  });
+  cv.addEventListener('pointerup',function(){ sOn=false; });
+  cv.addEventListener('pointercancel',function(){ sOn=false; });
+
+  // 方向键按钮
+  var padBtns=document.querySelectorAll('.pad button');
+  for(var i=0;i<padBtns.length;i++){
+    (function(btn){
+      var d=btn.getAttribute('data-dir');
+      btn.addEventListener('click',function(){
+        blur(btn);
+        if(!running) start();        // 死亡后也要能用方向键开局
+        if(d==='up') turn(0,-1); else if(d==='down') turn(0,1);
+        else if(d==='left') turn(-1,0); else turn(1,0);
+      });
+    })(padBtns[i]);
+  }
+
+  function restart(){ reset(); start(); }
+  // 点完按钮就移开焦点，否则按钮会吃掉空格键（空格变成"激活按钮"而不是暂停）
+  function blur(b){ if(b && b.blur) b.blur(); }
+  btnStart.addEventListener('click',function(){ blur(btnStart); start(); });
+  btnPause.addEventListener('click',function(){ blur(btnPause); pause(); });
+  btnRestart.addEventListener('click',function(){ blur(btnRestart); restart(); });
+  wrapMode.addEventListener('change',function(){ setMsg(wrapMode.checked?'穿墙模式：<b>开</b>':'穿墙模式：<b>关</b>'); });
+
+  // 切到后台自动暂停，回来不会瞬间暴毙
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden&&running&&!paused) pause();
+  });
+
+  reset();
+  resize();
+  draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+/* ===========================================================
+   液态玻璃 Liquid Glass
+   - 半透明磨砂表面 + 折射描边 + 顶部高光
+   - 背景漂浮光斑（给玻璃提供可折射的内容）
+   - 指针跟随的高光 + 缓慢流光，产生“液态”流动感
+   - 全程尊重系统「减少动效」设置
+   =========================================================== */
+
+:root{
+  --g-bg:rgba(255,255,255,.58);
+  --g-brd:rgba(255,255,255,.75);
+  --g-hi:rgba(255,255,255,.9);
+  --g-sh:0 8px 30px rgba(20,28,60,.10), 0 2px 8px rgba(20,28,60,.06);
+  --g-b1:#8fc7e8; --g-b2:#c3b0ff; --g-b3:#a6e6cf;
+}
+html[data-glass="dark"]{
+  --g-bg:rgba(32,35,44,.5);
+  --g-brd:rgba(255,255,255,.15);
+  --g-hi:rgba(255,255,255,.18);
+  --g-sh:0 10px 34px rgba(0,0,0,.45);
+  --g-b1:#2f5f96; --g-b2:#5b3fc4; --g-b3:#2b6d59;
+}
+
+/* 不支持 backdrop-filter 时提高不透明度，保证可读 */
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  :root{--g-bg:rgba(255,255,255,.88)}
+  html[data-glass="dark"]{--g-bg:rgba(32,35,44,.86)}
+}
+
+/* ---------- 背景氛围光斑 ---------- */
+.g-stage{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.g-blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:.45}
+.g-b1{width:46vw;height:46vw;left:-9vw;top:-13vw;background:var(--g-b1)}
+.g-b2{width:40vw;height:40vw;right:-7vw;top:16vh;background:var(--g-b2)}
+.g-b3{width:38vw;height:38vw;left:20vw;bottom:-15vw;background:var(--g-b3)}
+html[data-glass="dark"] .g-blob{opacity:.38}
+
+/* ---------- 玻璃表面 ---------- */
+.gx{
+  background:var(--g-bg);
+  -webkit-backdrop-filter:blur(18px) saturate(180%);
+  backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid var(--g-brd);
+  box-shadow:var(--g-sh), inset 0 1px 0 var(--g-hi);
+  transition:background .3s ease, box-shadow .3s ease, border-color .3s ease,
+             scale .25s cubic-bezier(.2,.8,.3,1), transform .25s ease,
+             opacity .45s ease, translate .45s ease;
+}
+.gx-r{border-radius:16px}
+.gx:hover{
+  box-shadow:0 14px 40px rgba(20,28,60,.14), 0 2px 8px rgba(20,28,60,.07), inset 0 1px 0 var(--g-hi);
+  border-color:var(--g-hi);
+}
+html[data-glass="dark"] .gx:hover{
+  box-shadow:0 16px 44px rgba(0,0,0,.5), inset 0 1px 0 var(--g-hi);
+}
+
+/* 全屏区块（首页首屏）不上边框：全屏玻璃只留磨砂质感，
+   边框线会在屏幕底部形成一条明显的分割线 */
+.hero.gx,
+.hero.gx:hover{
+  border:none;
+  box-shadow:none;
+}
+
+/* 保证 ::before/::after 的 inset:0 相对自身定位
+   （backdrop-filter 会创建包含块，但 @supports not 分支下没有它，必须显式兜底） */
+.gx-pos{position:relative}
+
+/* 指针跟随高光 */
+.gx::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(200px circle at var(--gx,50%) var(--gy,0%), var(--g-hi), transparent 62%);
+  opacity:0;transition:opacity .35s ease;
+}
+.gx:hover::before{opacity:.75}
+
+/* 缓慢流光，制造液态流动感（inset:0 + background-position 位移，不会溢出到元素外） */
+.gx::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg, transparent 34%, var(--g-hi) 50%, transparent 66%);
+  background-size:260% 100%;background-repeat:no-repeat;background-position:120% 0;
+  opacity:.14;
+}
+
+/* 主色按钮：保留色调，同时透出玻璃质感 */
+.gx.btn.primary{background:rgba(37,99,235,.72);border-color:rgba(147,197,253,.55)}
+.gx.btn.amber{background:rgba(217,119,6,.74);border-color:rgba(253,230,138,.5)}
+@supports (background: color-mix(in srgb, red 50%, transparent)){
+  /* 保持 90% 不透明：再低会让白字按钮的对比度掉到 4.5 以下（可读性优先于通透感） */
+  .gx.btn.primary{background:color-mix(in srgb, var(--blue) 90%, transparent)}
+  .gx.btn.amber{background:color-mix(in srgb, var(--amber) 90%, transparent)}
+}
+
+@media (prefers-reduced-motion: no-preference){
+  .gx:hover{scale:1.018}
+  /* hover 的 scale 特异性高于 a:active，这里补回按压反馈 */
+  .gx:active,.gx:hover:active{scale:.972}
+  .gx::after{animation:gSheen 7s ease-in-out infinite}
+  @keyframes gSheen{0%{background-position:120% 0}100%{background-position:-30% 0}}
+  .g-b1{animation:gD1 24s ease-in-out infinite alternate}
+  .g-b2{animation:gD2 28s ease-in-out infinite alternate}
+  .g-b3{animation:gD3 32s ease-in-out infinite alternate}
+  @keyframes gD1{to{transform:translate3d(6vw,5vh,0) scale(1.12)}}
+  @keyframes gD2{to{transform:translate3d(-7vw,7vh,0) scale(1.08)}}
+  @keyframes gD3{to{transform:translate3d(5vw,-6vh,0) scale(1.14)}}
+}
+
+/* 液态玻璃下的文字稍微加强，保证对比度 */
+.gx{color:inherit}
+html:not([data-glass="dark"]) .gx{text-shadow:0 1px 0 rgba(255,255,255,.35)}
+html[data-glass="dark"] .gx{text-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+/* ===========================================================
+   老浏览器回退 + iOS 26 连续曲率
+   （本文件在 theme.css 之后加载，.gx 相关规则必须写在这里）
+   =========================================================== */
+@supports (corner-shape: squircle){
+  .gx{corner-shape:squircle}
+}
+/* 不支持独立 scale 属性：用 transform 实现按压/悬浮反馈 */
+@supports not (scale: 1){
+  .gx:hover{transform:scale(1.018)}
+  .gx:active,.gx:hover:active{transform:scale(.972)}
+}
