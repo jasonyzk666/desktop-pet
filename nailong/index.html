@@ -74,6 +74,10 @@ h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
   animation:wob 1.6s ease-in-out infinite;
   touch-action:manipulation;
 }
+/* 触屏设备：25 只精灵同屏时每帧重算 drop-shadow 会掉帧，去掉投影 */
+@media (hover:none) and (pointer:coarse){
+  .dragon{filter:none}
+}
 .dragon img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
 @keyframes wob{
   0%,100%{rotate:-7deg}
@@ -149,11 +153,11 @@ h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
 }
 @media(max-width:360px){ .dragon{--dsz:42px} }
 </style>
-<link rel="stylesheet" href="../assets/motion.css?v=20261104">
-<link rel="stylesheet" href="../assets/theme.css?v=20261104">
+<link rel="stylesheet" href="../assets/motion.css?v=20261105">
+<link rel="stylesheet" href="../assets/theme.css?v=20261105">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="../assets/glass.css?v=20261104">
+<link rel="stylesheet" href="../assets/glass.css?v=20261105">
 </head>
 <body>
 
@@ -204,9 +208,9 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   <img id="lbImg" src="" alt="奶龙表情大图">
 </div>
 
-<script src="../assets/theme.js?v=20261104" defer></script>
-<script src="../assets/motion.js?v=20261104" defer></script>
-<script src="../assets/glass.js?v=20261104" defer></script>
+<script src="../assets/theme.js?v=20261105" defer></script>
+<script src="../assets/motion.js?v=20261105" defer></script>
+<script src="../assets/glass.js?v=20261105" defer></script>
 <script>
 (function(){
   'use strict';

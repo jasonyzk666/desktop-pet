@@ -27,12 +27,18 @@ html[data-glass="dark"]{
   html[data-glass="dark"]{--g-bg:rgba(32,35,44,.86)}
 }
 
-/* ---------- 背景氛围光斑 ---------- */
+/* ---------- 背景氛围光斑 ----------
+   用径向渐变模拟柔光，而不是 filter:blur ——
+   blur(72px) 作用在 40vw 级别的大元素上，手机端每次光栅化都极贵，
+   且 fixed 背景在滚动时反复触发重绘，是触屏滑动卡顿的主因之一 */
 .g-stage{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.g-blob{position:absolute;border-radius:50%;filter:blur(72px);opacity:.45}
-.g-b1{width:46vw;height:46vw;left:-9vw;top:-13vw;background:var(--g-b1)}
-.g-b2{width:40vw;height:40vw;right:-7vw;top:16vh;background:var(--g-b2)}
-.g-b3{width:38vw;height:38vw;left:20vw;bottom:-15vw;background:var(--g-b3)}
+.g-blob{position:absolute;border-radius:50%;opacity:.45}
+.g-b1{width:46vw;height:46vw;left:-9vw;top:-13vw;
+  background:radial-gradient(circle,var(--g-b1) 0%,var(--g-b1) 36%,transparent 74%)}
+.g-b2{width:40vw;height:40vw;right:-7vw;top:16vh;
+  background:radial-gradient(circle,var(--g-b2) 0%,var(--g-b2) 36%,transparent 74%)}
+.g-b3{width:38vw;height:38vw;left:20vw;bottom:-15vw;
+  background:radial-gradient(circle,var(--g-b3) 0%,var(--g-b3) 36%,transparent 74%)}
 html[data-glass="dark"] .g-blob{opacity:.38}
 
 /* ---------- 玻璃表面 ---------- */
@@ -96,7 +102,11 @@ html[data-glass="dark"] .gx:hover{
   .gx:hover{scale:1.018}
   /* hover 的 scale 特异性高于 a:active，这里补回按压反馈 */
   .gx:active,.gx:hover:active{scale:.972}
-  .gx::after{animation:gSheen 7s ease-in-out infinite}
+  /* 流光动画每帧都要重绘元素背景，几十个玻璃元素同时跑会拖垮滚动；
+     只在鼠标设备上保留（触屏设备上 .gx::after 静止显示） */
+  @media (hover:hover) and (pointer:fine){
+    .gx::after{animation:gSheen 7s ease-in-out infinite}
+  }
   @keyframes gSheen{0%{background-position:120% 0}100%{background-position:-30% 0}}
   .g-b1{animation:gD1 24s ease-in-out infinite alternate}
   .g-b2{animation:gD2 28s ease-in-out infinite alternate}
@@ -122,4 +132,23 @@ html[data-glass="dark"] .gx{text-shadow:0 1px 0 rgba(0,0,0,.25)}
 @supports not (scale: 1){
   .gx:hover{transform:scale(1.018)}
   .gx:active,.gx:hover:active{transform:scale(.972)}
+}
+
+/* ===========================================================
+   手机 / 触屏性能模式
+   触屏滚动时，每个玻璃元素背后的 backdrop-filter 都要逐帧
+   重新采样模糊 —— 一页几十个 .gx（含首页全屏 .hero）是滑动
+   掉帧的最大元凶。只在真实触屏设备（无鼠标悬停 + 粗指针）上
+   关闭实时模糊，改用更不透明的表面（与不支持 backdrop-filter
+   的回退配方一致，可读性已验证）；边框 / 高光 / 投影 / 流光
+   质感全部保留。窄窗口的桌面不受影响。
+   =========================================================== */
+@media (hover:none) and (pointer:coarse){
+  :root{--g-bg:rgba(255,255,255,.88)}
+  html[data-glass="dark"]{--g-bg:rgba(32,35,44,.86)}
+  .gx{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
+  .gx::after{animation:none}
 }

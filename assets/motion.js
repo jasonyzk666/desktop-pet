@@ -60,12 +60,25 @@
   items.forEach(function(el){ io.observe(el); });
 
   // 兜底：滚动时再扫一遍，防止任何情况下元素一直不显示
+  var sweepOn = true;
+  function offSweep(){
+    if(!sweepOn) return;
+    sweepOn = false;
+    window.removeEventListener('scroll', sweep);
+    window.removeEventListener('resize', sweep);
+  }
   function sweep(){
+    if(!sweepOn) return;
+    var waiting = 0;
     items.forEach(function(el){
       if(el.classList.contains('m-in')) return;
       var r = el.getBoundingClientRect();
       if(r.top < window.innerHeight * 0.94 && r.bottom > 0) show(el, el._delay || 0);
+      else waiting++;                                  // 还在视口外，继续监听
     });
+    // 全部已浮现/已安排后立刻注销滚动监听：
+    // 否则每次滑动都要对剩余元素做 getBoundingClientRect，长页面滚动会持续卡顿
+    if(!waiting) offSweep();
   }
   window.addEventListener('scroll', sweep, {passive:true});
   window.addEventListener('resize', sweep);

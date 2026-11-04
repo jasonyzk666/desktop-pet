@@ -28,10 +28,13 @@
     if(cs.borderTopLeftRadius === '0px') el.classList.add('gx-r');
   });
 
-  /* ---------- 3. 指针跟随高光 ---------- */
+  /* ---------- 3. 指针跟随高光 ----------
+     仅鼠标指针参与：手指/触控笔在滑动时每帧触发 pointermove，
+     白跑 closest() + getBoundingClientRect 只会加重滚动负担 */
   if(reduce) return;
   var cur = null, pending = false, px = 0, py = 0;
   document.addEventListener('pointermove', function(e){
+    if(e.pointerType && e.pointerType !== 'mouse') return;
     var hit = e.target && e.target.closest ? e.target.closest('.gx') : null;
     cur = hit; px = e.clientX; py = e.clientY;
     if(pending) return;
