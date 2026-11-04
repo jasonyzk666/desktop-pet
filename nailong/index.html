@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>奶龙入侵 · 趣味互动 · jasonyzk</title>
+<link rel="icon" type="image/png" href="/assets/nailong/2d-07.png">
+<meta name="theme-color" content="#fbfbf9">
+<meta name="description" content="奶龙表情包大举入侵网页！点一只驱逐一只，看看你能守住多久。29 只奶龙等你来清场。">
+<link rel="canonical" href="https://jasonyzk.top/nailong/">
+<link rel="apple-touch-icon" href="/assets/nailong/2d-07.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="jasonyzk">
+<meta property="og:title" content="奶龙入侵 · 趣味互动">
+<meta property="og:description" content="奶龙从屏幕四面八方爬进来，点击驱逐，守住你的页面！">
+<meta property="og:url" content="https://jasonyzk.top/nailong/">
+<meta property="og:image" content="https://jasonyzk.top/assets/nailong/3d-01.png">
+<meta name="twitter:card" content="summary">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:auto}
+body{
+  background:var(--bg);color:var(--tx);min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+
+.topbar{
+  padding:22px 4vw 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:13px;
+}
+.topbar > span{margin-left:auto}
+.back{color:var(--tx2);transition:color .15s;display:inline-flex;align-items:center;min-height:34px;padding:7px 9px;margin:-7px -9px;border-radius:10px}
+.back:hover{color:var(--tx)}
+
+.wrap{max-width:760px;margin:0 auto;padding:24px 4vw 60px}
+h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
+.lead{margin-top:10px;color:var(--tx2);font-size:15px;line-height:1.8}
+
+.hud{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.hud div{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:12px 10px;text-align:center;
+}
+.hud b{display:block;font-size:clamp(18px,4.4vw,24px);font-variant-numeric:tabular-nums}
+.hud span{display:block;margin-top:4px;font-size:12px;color:var(--tx3)}
+.hud .hi b{color:var(--accent)}
+
+/* 入侵舞台 */
+.stage{
+  margin-top:18px;position:relative;overflow:hidden;
+  height:clamp(320px,55vh,520px);
+  border-radius:18px;border:1px solid var(--line);
+  background:
+    radial-gradient(circle at 20% 15%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 42%),
+    radial-gradient(circle at 82% 85%,color-mix(in srgb,var(--amber) 8%,transparent),transparent 45%),
+    var(--surface);
+  cursor:crosshair;
+  touch-action:manipulation;
+}
+.stage.empty::after{
+  content:"点「开始入侵」，奶龙马上就到";
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--tx3);font-size:15px;pointer-events:none;
+}
+.dragon{
+  position:absolute;left:0;top:0;
+  width:var(--dsz,64px);height:var(--dsz,64px);
+  cursor:pointer;user-select:none;-webkit-user-drag:none;
+  will-change:transform;
+  filter:drop-shadow(0 3px 6px rgba(20,35,70,.18));
+  animation:wob 1.6s ease-in-out infinite;
+  touch-action:manipulation;
+}
+.dragon img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
+@keyframes wob{
+  0%,100%{rotate:-7deg}
+  50%{rotate:7deg}
+}
+.dragon.flee{
+  animation:flee .55s ease-in forwards;
+}
+@keyframes flee{
+  0%{opacity:1;scale:1 1}
+  30%{scale:1.25 1.25;opacity:1}
+  100%{translate:0 -46vh;rotate:400deg;scale:.2 .2;opacity:0}
+}
+.dragon.rush{animation-duration:.5s}
+
+.msg{margin-top:14px;text-align:center;font-size:15px;min-height:24px;color:var(--tx2)}
+.msg b{color:var(--tx)}
+
+.bar{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+.btn{
+  font:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  padding:12px 24px;border-radius:99px;border:1px solid var(--line);
+  background:var(--surface);color:var(--tx);min-height:46px;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+}
+.btn:hover{border-color:var(--tx3);box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn.danger{background:#b91c1c;border-color:#b91c1c;color:#fff}
+
+.tips{
+  margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 22px;
+}
+.tips h2{font-size:16px;margin-bottom:8px}
+.tips li{font-size:14px;color:var(--tx2);line-height:1.9;margin-left:18px}
+.credit{margin-top:14px;font-size:12.5px;color:var(--tx3);line-height:1.8}
+
+/* 表情包画廊 */
+.gallery{margin-top:34px}
+.gallery h2{font-size:20px;margin-bottom:4px}
+.gallery p{font-size:13.5px;color:var(--tx3);margin-bottom:14px}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;
+}
+.cell{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:10px;display:flex;align-items:center;justify-content:center;
+  transition:transform .18s,box-shadow .18s,border-color .18s;cursor:zoom-in;
+}
+.cell:hover{transform:translateY(-3px) scale(1.04);box-shadow:var(--shadow);border-color:var(--tx3)}
+.cell img{width:100%;height:auto;display:block;-webkit-user-drag:none}
+
+/* 灯箱 */
+.lightbox{
+  position:fixed;inset:0;z-index:1400;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(15,18,28,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.lightbox.show{display:flex}
+.lightbox img{
+  width:min(64vmin,340px);height:auto;border-radius:18px;
+  animation:pop .25s ease;
+}
+@keyframes pop{from{scale:.7;opacity:0}}
+
+@media(max-width:560px){
+  .topbar{padding:16px 4vw 0}
+  .wrap{padding:18px 4vw 48px}
+  .btn{flex:1 1 auto;min-width:110px}
+  .tips{padding:15px 17px}
+  .hud{gap:8px}
+  .dragon{--dsz:48px}
+}
+@media(max-width:360px){ .dragon{--dsz:42px} }
+</style>
+<link rel="stylesheet" href="../assets/motion.css?v=20261104">
+<link rel="stylesheet" href="../assets/theme.css?v=20261104">
+<script>document.documentElement.className+=' motion';
+setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
+<link rel="stylesheet" href="../assets/glass.css?v=20261104">
+</head>
+<body>
+
+<div class="topbar" data-theme-slot>
+  <a class="back" href="../">← 返回主站</a>
+  <span style="color:var(--tx3)">Fan Play · 奶龙入侵</span>
+</div>
+
+<div class="wrap">
+  <h1>奶龙入侵</h1>
+  <p class="lead">警报！成群的奶龙正从四面八方爬进你的屏幕。点一只驱逐一只——它们会越来多、越来越快，看看你最多能驱逐多少只。</p>
+
+  <div class="hud">
+    <div><b id="hNow">0</b><span>当前在场</span></div>
+    <div><b id="hOut">0</b><span>本次驱逐</span></div>
+    <div class="hi"><b id="hBest">0</b><span>最高纪录</span></div>
+  </div>
+
+  <div class="stage empty" id="stage" aria-label="奶龙入侵舞台，点击奶龙即可驱逐"></div>
+
+  <p class="msg" id="msg">按 <b>开始入侵</b>，第一只奶龙马上出现</p>
+
+  <div class="bar">
+    <button class="btn primary" id="btnStart" type="button">开始入侵</button>
+    <button class="btn danger" id="btnStop" type="button" disabled>停止并结算</button>
+    <button class="btn" id="btnSound" type="button" aria-pressed="true">🔊 音效开</button>
+  </div>
+
+  <div class="tips">
+    <h2>玩法与规则</h2>
+    <ol>
+      <li>点击「开始入侵」后，奶龙会从舞台四边不断爬进来，间隔越来越短。</li>
+      <li><b>点一下奶龙</b>即可把它驱逐出境（它会转着圈飞走）。点空处奶龙们会短暂受惊加速。</li>
+      <li>场上的奶龙最多 25 只。点「停止并结算」结束本轮，驱逐数超过历史纪录就刷新。</li>
+      <li>音效可随时开关，纪录保存在本机。</li>
+    </ol>
+    <p class="credit">「奶龙」形象与表情包版权归深圳第七印象（Nailoong Official）所有，本页面为粉丝制作的非商业趣味演示，素材来自官方公开发布的贴纸包。</p>
+  </div>
+
+  <div class="gallery">
+    <h2>入侵军团图鉴</h2>
+    <p>本次参战的 29 只奶龙，点开看大图。</p>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lb" role="dialog" aria-label="查看大图">
+  <img id="lbImg" src="" alt="奶龙表情大图">
+</div>
+
+<script src="../assets/theme.js?v=20261104" defer></script>
+<script src="../assets/motion.js?v=20261104" defer></script>
+<script src="../assets/glass.js?v=20261104" defer></script>
+<script>
+(function(){
+  'use strict';
+  var DRAGONS=[
+    '2d-01.png','2d-02.png','2d-03.png','2d-04.png','2d-05.png','2d-06.png','2d-07.png',
+    '2d-08.png','2d-09.png','2d-10.png','2d-11.png','2d-12.png','2d-13.png','2d-14.png',
+    '3d-01.png','3d-02.png','3d-03.png','3d-04.png','3d-05.png','3d-06.png','3d-08.png',
+    '3d-09.png','3d-10.png','3d-11.png','3d-12.png','3d-13.png','3d-14.png','3d-15.png','3d-16.png'
+  ];
+  var BASE='/assets/nailong/';
+  var MAX_ON_STAGE=25, KEY='jz-nailong-best';
+  var stage=document.getElementById('stage');
+  var msg=document.getElementById('msg');
+  var hNow=document.getElementById('hNow'), hOut=document.getElementById('hOut'), hBest=document.getElementById('hBest');
+  var btnStart=document.getElementById('btnStart'), btnStop=document.getElementById('btnStop'), btnSound=document.getElementById('btnSound');
+
+  var running=false, out=0, spawnT=null, last=0, rafId=null;
+  var invaders=[];      // {el,x,y,vx,vy,sz,ph}
+  var soundOn=true, actx=null;
+
+  function best(){ var v=0; try{ v=parseInt(localStorage.getItem(KEY),10)||0; }catch(e){} return v; }
+  function setBest(v){ try{ localStorage.setItem(KEY,String(v)); }catch(e){} hBest.textContent=v; }
+  hBest.textContent=best();
+
+  /* ---------- 音效 ---------- */
+  function beep(freq,dur,type,vol){
+    if(!soundOn) return;
+    try{
+      actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      var o=actx.createOscillator(), g=actx.createGain();
+      o.type=type||'sine'; o.frequency.value=freq;
+      g.gain.setValueAtTime(vol||.16,actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+(dur||.15));
+      o.connect(g); g.connect(actx.destination);
+      o.start(); o.stop(actx.currentTime+(dur||.15));
+    }catch(e){}
+  }
+  btnSound.addEventListener('click',function(){
+    soundOn=!soundOn;
+    btnSound.textContent=soundOn?'🔊 音效开':'🔇 音效关';
+    btnSound.setAttribute('aria-pressed',soundOn?'true':'false');
+  });
+
+  /* ---------- 入侵逻辑 ---------- */
+  function size(){ return window.innerWidth<=360?42:(window.innerWidth<=560?48:64); }
+
+  function spawn(){
+    if(invaders.length>=MAX_ON_STAGE) return;
+    var f=DRAGONS[Math.floor(Math.random()*DRAGONS.length)];
+    var el=document.createElement('div');
+    el.className='dragon';
+    el.innerHTML='<img src="'+BASE+f+'" alt="奶龙表情">';
+    var sz=size(), sw=stage.clientWidth, sh=stage.clientHeight;
+    var side=Math.floor(Math.random()*4);   // 0上1右2下3左
+    var x,y,vx,vy;
+    var sp=(.55+Math.random()*.75)*(sw<420?.8:1);   // px/帧基准
+    var ang=Math.PI*(Math.random()*.9+.05)+ (side%2?Math.PI/2:0);
+    if(side===0){ x=Math.random()*(sw-sz); y=-sz; }
+    else if(side===2){ x=Math.random()*(sw-sz); y=sh; }
+    else if(side===3){ x=-sz; y=Math.random()*(sh-sz); }
+    else { x=sw; y=Math.random()*(sh-sz); }
+    // 朝舞台内部走
+    var tx=sw/2-sw/2*Math.random(), ty=sh/2-sh/2*Math.random();
+    var dx=tx-x, dy=ty-y, len=Math.hypot(dx,dy)||1;
+    vx=dx/len*sp; vy=dy/len*sp;
+    stage.appendChild(el);
+    var inv={el:el,x:x,y:y,vx:vx,vy:vy,sz:sz,ph:Math.random()*Math.PI*2,turn:0};
+    el.addEventListener('pointerdown',function(ev){ ev.stopPropagation(); flee(inv); });
+    invaders.push(inv);
+    hNow.textContent=invaders.length;
+    beep(520+Math.random()*160,.09,'triangle',.10);
+  }
+
+  function flee(inv){
+    var i=invaders.indexOf(inv);
+    if(i<0||inv.el.classList.contains('flee')) return;
+    invaders.splice(i,1);
+    inv.el.classList.add('flee');
+    out++;
+    hOut.textContent=out; hNow.textContent=invaders.length;
+    beep(660+Math.random()*220,.16,'square',.12);
+    setTimeout(function(){ if(inv.el.parentNode) inv.el.parentNode.removeChild(inv.el); },560);
+    if(running&&invaders.length===0){
+      msg.innerHTML='清场成功！已驱逐 <b>'+out+'</b> 只，奶龙还在路上……';
+      beep(880,.2,'sine',.14);
+    }
+  }
+
+  function tick(t){
+    if(!running) return;
+    var sw=stage.clientWidth, sh=stage.clientHeight;
+    for(var i=invaders.length-1;i>=0;i--){
+      var v=invaders[i], sz=v.sz;
+      v.turn-=1;
+      if(v.turn<=0){                     // 随机转向
+        var a=Math.atan2(v.vy,v.vx)+(Math.random()-.5)*1.1;
+        var sp=Math.hypot(v.vx,v.vy);
+        v.vx=Math.cos(a)*sp; v.vy=Math.sin(a)*sp;
+        v.turn=60+Math.random()*90;
+      }
+      v.x+=v.vx; v.y+=v.vy;
+      if(v.x<-sz*1.2) v.x=-sz*1.2, v.vx=Math.abs(v.vx);
+      if(v.x>sw+sz*.2) v.x=sw+sz*.2, v.vx=-Math.abs(v.vx);
+      if(v.y<-sz*1.2) v.y=-sz*1.2, v.vy=Math.abs(v.vy);
+      if(v.y>sh+sz*.2) v.y=sh+sz*.2, v.vy=-Math.abs(v.vy);
+      v.el.style.transform='translate('+v.x+'px,'+v.y+'px)';
+      v.ph+=.06;
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+
+  function schedule(){
+    if(!running) return;
+    spawn();
+    var n=invaders.length;
+    var gap=Math.max(320, 900-n*24);      // 越多越快
+    spawnT=setTimeout(schedule,gap*(0.75+Math.random()*.5));
+  }
+
+  function start(){
+    if(running) return;
+    running=true; out=0;
+    hOut.textContent='0';
+    stage.classList.remove('empty');
+    btnStart.disabled=true; btnStop.disabled=false;
+    msg.innerHTML='奶龙正在逼近…… <b>点它们！</b>';
+    last=0;
+    rafId=requestAnimationFrame(tick);
+    schedule();
+    beep(392,.12,'sine',.12);
+    setTimeout(function(){ beep(523,.14,'sine',.12); },140);
+  }
+
+  function stop(){
+    if(!running) return;
+    running=false;
+    clearTimeout(spawnT);
+    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+    for(var i=invaders.length-1;i>=0;i--){
+      (function(v){ v.el.classList.add('flee'); setTimeout(function(){ if(v.el.parentNode) v.el.parentNode.removeChild(v.el); },560); })(invaders[i]);
+    }
+    invaders=[];
+    hNow.textContent='0';
+    btnStart.disabled=false; btnStop.disabled=true;
+    var b=best();
+    if(out>b){ setBest(out); msg.innerHTML='本轮驱逐 <b>'+out+'</b> 只，刷新最高纪录！🎉'; }
+    else if(out===b&&out>0){ msg.innerHTML='本轮驱逐 <b>'+out+'</b> 只，追平纪录！'; }
+    else { msg.innerHTML='本轮驱逐 <b>'+out+'</b> 只，最高纪录 <b>'+b+'</b>。再守一次？'; }
+    beep(330,.18,'sine',.12);
+  }
+
+  btnStart.addEventListener('click',start);
+  btnStop.addEventListener('click',stop);
+
+  // 点空白：奶龙受惊加速
+  stage.addEventListener('pointerdown',function(){
+    if(!running) return;
+    beep(200,.1,'sawtooth',.06);
+    for(var i=0;i<invaders.length;i++){
+      var v=invaders[i];
+      v.vx*=2.1; v.vy*=2.1; v.turn=30;
+      v.el.classList.add('rush');
+      (function(el){ setTimeout(function(){ el.classList.remove('rush'); },500); })(v.el);
+    }
+  });
+
+  // 切后台自动暂停生成，回来继续
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){ clearTimeout(spawnT); }
+    else if(running){ schedule(); }
+  });
+
+  /* ---------- 画廊 ---------- */
+  var grid=document.getElementById('grid'), lb=document.getElementById('lb'), lbImg=document.getElementById('lbImg');
+  DRAGONS.forEach(function(f){
+    var c=document.createElement('div');
+    c.className='cell';
+    c.innerHTML='<img loading="lazy" src="'+BASE+f+'" alt="奶龙表情 '+f+'">';
+    c.addEventListener('click',function(){ lbImg.src=BASE+f; lb.classList.add('show'); });
+    grid.appendChild(c);
+  });
+  lb.addEventListener('click',function(){ lb.classList.remove('show'); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') lb.classList.remove('show'); });
+})();
+</script>
+</body>
+</html>
