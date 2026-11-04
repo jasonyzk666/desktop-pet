@@ -1,20 +1,14 @@
-/* 液态玻璃：铺背景光斑 + 给 UI 元素上玻璃质感 + 指针跟随高光 */
+/* 液态玻璃（Apple HIG · 仅按钮）
+   - 材质只给功能层：卡片 / 标题 / 手机壳等内容层不再叠玻璃
+   - 指针跟随高光：仅鼠标设备参与（手指滑动时 pointermove 每帧触发，
+     白跑 closest() + getBoundingClientRect 只会加重滚动负担）
+   - 尊重系统「减少动效」设置 */
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- 1. 背景漂浮光斑 ---------- */
-  var stage = document.createElement('div');
-  stage.className = 'g-stage';
-  stage.setAttribute('aria-hidden','true');
-  stage.innerHTML = '<div class="g-blob g-b1"></div><div class="g-blob g-b2"></div><div class="g-blob g-b3"></div>';
-  document.body.insertBefore(stage, document.body.firstChild);
-
-  /* ---------- 2. 给 UI 元素加玻璃 ---------- */
+  /* ---------- 1. 给按钮加玻璃 ---------- */
   var SEL = [
-    '.card','.pill','.status','.phone','.note','.dl-item','.feat-item','.shot',
-    '.btn','.tag','.link-btn','.contact-item','.changelog-item','.tools-title',
-    '.stack span','.contact a','.contact button','.row','.sechead','.back','.topbar',
-    '.links a','.kicker','.hero'
+    '.btn', '.link-btn', '.contact a', '.contact button'
   ].join(',');
 
   var nodes = [].slice.call(document.querySelectorAll(SEL));
@@ -22,15 +16,13 @@
     if(el.closest('.g-stage')) return;
     var cs = getComputedStyle(el);
     if(cs.display === 'inline') return;                    // 行内元素不加，避免变成方块
-    if(cs.position === 'fixed') return;                    // 固定层（返回按钮/浮层）不加
+    if(cs.position === 'fixed') return;                    // 固定层不加
     el.classList.add('gx');
-    if(cs.position === 'static') el.classList.add('gx-pos');   // 安全兜底，不破坏 absolute 布局
+    if(cs.position === 'static') el.classList.add('gx-pos');   // ::before 定位兜底
     if(cs.borderTopLeftRadius === '0px') el.classList.add('gx-r');
   });
 
-  /* ---------- 3. 指针跟随高光 ----------
-     仅鼠标指针参与：手指/触控笔在滑动时每帧触发 pointermove，
-     白跑 closest() + getBoundingClientRect 只会加重滚动负担 */
+  /* ---------- 2. 指针跟随高光（仅鼠标） ---------- */
   if(reduce) return;
   var cur = null, pending = false, px = 0, py = 0;
   document.addEventListener('pointermove', function(e){

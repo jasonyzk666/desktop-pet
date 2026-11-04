@@ -14,7 +14,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-vi
 }
 @media (prefers-reduced-motion: no-preference){
 
-  /* 可点击元素的过渡与按压反馈 */
+  /* 可点击元素的过渡与按压反馈
+     按压采用 HIG 规格：scale(.97)，按下在 60ms 内跟手（不等松手），
+     松手按基础曲线弹回 */
   a,button,[role="button"],input[type="submit"],label[onclick]{
     transition:
       color .18s ease,
@@ -22,10 +24,13 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-vi
       border-color .18s ease,
       box-shadow .22s ease,
       opacity .2s ease,
-      scale .16s cubic-bezier(.2,.8,.3,1);
+      scale .2s cubic-bezier(.2,.8,.3,1);
   }
   a:active,button:active,[role="button"]:active,
-  input[type="submit"]:active,label[onclick]:active{scale:.965}
+  input[type="submit"]:active,label[onclick]:active{
+    scale:.97;
+    transition-duration:.06s;
+  }
 
   /* 点击处涟漪 */
   .ripple-dot{
@@ -52,7 +57,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-vi
    =========================================================== */
 @supports not (scale: 1){
   a:active,button:active,[role="button"]:active,
-  input[type="submit"]:active,label[onclick]:active{transform:scale(.965)}
+  input[type="submit"]:active,label[onclick]:active{transform:scale(.97)}
 }
 @supports not (translate: 0 26px){
   html.motion [data-reveal]{opacity:1;transform:none}

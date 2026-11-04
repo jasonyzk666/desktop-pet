@@ -1,93 +1,63 @@
 /* ===========================================================
-   液态玻璃 Liquid Glass
-   - 半透明磨砂表面 + 折射描边 + 顶部高光
-   - 背景漂浮光斑（给玻璃提供可折射的内容）
-   - 指针跟随的高光 + 缓慢流光，产生“液态”流动感
-   - 全程尊重系统「减少动效」设置
+   液态玻璃 Liquid Glass（Apple HIG · 仅按钮）
+   - 材质只给功能层：玻璃仅用于按钮，内容层一律实色表面
+   - 配方取自 HIG 控件材质：半透明表面 + blur(20px) saturate(180%)
+     + 亮顶边（光线打在材质上）
+   - 指针跟随高光：反馈在手势全程连续，仅鼠标设备
+   - 无持续流光 / 无背景光斑：材质不闪烁，能回答「为什么在这」
+     的元素才留下（Purpose 优先）
+   - 尊重系统「减少动效 / 降低透明度 / 增强对比度」设置
    =========================================================== */
 
 :root{
-  --g-bg:rgba(255,255,255,.58);
-  --g-brd:rgba(255,255,255,.75);
-  --g-hi:rgba(255,255,255,.9);
-  --g-sh:0 8px 30px rgba(20,28,60,.10), 0 2px 8px rgba(20,28,60,.06);
-  --g-b1:#8fc7e8; --g-b2:#c3b0ff; --g-b3:#a6e6cf;
+  --g-bg:rgba(255,255,255,.7);          /* HIG 亮色控件层 */
+  --g-brd:rgba(255,255,255,.55);        /* 折射描边（亮边缘） */
+  --g-hi:rgba(255,255,255,.9);          /* 顶边高光 */
+  --g-sh:0 4px 16px rgba(20,28,60,.12), inset 0 1px 0 var(--g-hi);
 }
 html[data-glass="dark"]{
-  --g-bg:rgba(32,35,44,.5);
-  --g-brd:rgba(255,255,255,.15);
+  --g-bg:rgba(30,30,34,.7);             /* HIG 深色控件层 */
+  --g-brd:rgba(255,255,255,.16);
   --g-hi:rgba(255,255,255,.18);
-  --g-sh:0 10px 34px rgba(0,0,0,.45);
-  --g-b1:#2f5f96; --g-b2:#5b3fc4; --g-b3:#2b6d59;
+  --g-sh:0 6px 20px rgba(0,0,0,.42), inset 0 1px 0 var(--g-hi);
 }
 
 /* 不支持 backdrop-filter 时提高不透明度，保证可读 */
 @supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
   :root{--g-bg:rgba(255,255,255,.88)}
-  html[data-glass="dark"]{--g-bg:rgba(32,35,44,.86)}
+  html[data-glass="dark"]{--g-bg:rgba(30,30,34,.86)}
 }
 
-/* ---------- 背景氛围光斑 ----------
-   用径向渐变模拟柔光，而不是 filter:blur ——
-   blur(72px) 作用在 40vw 级别的大元素上，手机端每次光栅化都极贵，
-   且 fixed 背景在滚动时反复触发重绘，是触屏滑动卡顿的主因之一 */
-.g-stage{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.g-blob{position:absolute;border-radius:50%;opacity:.45}
-.g-b1{width:46vw;height:46vw;left:-9vw;top:-13vw;
-  background:radial-gradient(circle,var(--g-b1) 0%,var(--g-b1) 36%,transparent 74%)}
-.g-b2{width:40vw;height:40vw;right:-7vw;top:16vh;
-  background:radial-gradient(circle,var(--g-b2) 0%,var(--g-b2) 36%,transparent 74%)}
-.g-b3{width:38vw;height:38vw;left:20vw;bottom:-15vw;
-  background:radial-gradient(circle,var(--g-b3) 0%,var(--g-b3) 36%,transparent 74%)}
-html[data-glass="dark"] .g-blob{opacity:.38}
-
-/* ---------- 玻璃表面 ---------- */
+/* ---------- 玻璃按钮 ---------- */
 .gx{
   background:var(--g-bg);
-  -webkit-backdrop-filter:blur(18px) saturate(180%);
-  backdrop-filter:blur(18px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%);
   border:1px solid var(--g-brd);
-  box-shadow:var(--g-sh), inset 0 1px 0 var(--g-hi);
-  transition:background .3s ease, box-shadow .3s ease, border-color .3s ease,
-             scale .25s cubic-bezier(.2,.8,.3,1), transform .25s ease,
-             opacity .45s ease, translate .45s ease;
+  box-shadow:var(--g-sh);
+  transition:background .25s ease, box-shadow .25s ease, border-color .25s ease,
+             scale .2s cubic-bezier(.2,.8,.3,1), transform .2s ease;
 }
 .gx-r{border-radius:16px}
 .gx:hover{
-  box-shadow:0 14px 40px rgba(20,28,60,.14), 0 2px 8px rgba(20,28,60,.07), inset 0 1px 0 var(--g-hi);
+  box-shadow:0 8px 24px rgba(20,28,60,.15), inset 0 1px 0 var(--g-hi);
   border-color:var(--g-hi);
 }
 html[data-glass="dark"] .gx:hover{
-  box-shadow:0 16px 44px rgba(0,0,0,.5), inset 0 1px 0 var(--g-hi);
+  box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 1px 0 var(--g-hi);
 }
 
-/* 全屏区块（首页首屏）不上边框：全屏玻璃只留磨砂质感，
-   边框线会在屏幕底部形成一条明显的分割线 */
-.hero.gx,
-.hero.gx:hover{
-  border:none;
-  box-shadow:none;
-}
-
-/* 保证 ::before/::after 的 inset:0 相对自身定位
+/* 保证 ::before 的 inset:0 相对自身定位
    （backdrop-filter 会创建包含块，但 @supports not 分支下没有它，必须显式兜底） */
 .gx-pos{position:relative}
 
-/* 指针跟随高光 */
+/* 指针跟随高光：反馈在手势全程连续（仅鼠标，见 glass.js） */
 .gx::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:radial-gradient(200px circle at var(--gx,50%) var(--gy,0%), var(--g-hi), transparent 62%);
-  opacity:0;transition:opacity .35s ease;
+  background:radial-gradient(150px circle at var(--gx,50%) var(--gy,0%), var(--g-hi), transparent 62%);
+  opacity:0;transition:opacity .3s ease;
 }
-.gx:hover::before{opacity:.75}
-
-/* 缓慢流光，制造液态流动感（inset:0 + background-position 位移，不会溢出到元素外） */
-.gx::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(115deg, transparent 34%, var(--g-hi) 50%, transparent 66%);
-  background-size:260% 100%;background-repeat:no-repeat;background-position:120% 0;
-  opacity:.14;
-}
+.gx:hover::before{opacity:.7}
 
 /* 主色按钮：保留色调，同时透出玻璃质感 */
 .gx.btn.primary{background:rgba(37,99,235,.72);border-color:rgba(147,197,253,.55)}
@@ -100,26 +70,38 @@ html[data-glass="dark"] .gx:hover{
 
 @media (prefers-reduced-motion: no-preference){
   .gx:hover{scale:1.018}
-  /* hover 的 scale 特异性高于 a:active，这里补回按压反馈 */
-  .gx:active,.gx:hover:active{scale:.972}
-  /* 流光动画每帧都要重绘元素背景，几十个玻璃元素同时跑会拖垮滚动；
-     只在鼠标设备上保留（触屏设备上 .gx::after 静止显示） */
-  @media (hover:hover) and (pointer:fine){
-    .gx::after{animation:gSheen 7s ease-in-out infinite}
-  }
-  @keyframes gSheen{0%{background-position:120% 0}100%{background-position:-30% 0}}
-  .g-b1{animation:gD1 24s ease-in-out infinite alternate}
-  .g-b2{animation:gD2 28s ease-in-out infinite alternate}
-  .g-b3{animation:gD3 32s ease-in-out infinite alternate}
-  @keyframes gD1{to{transform:translate3d(6vw,5vh,0) scale(1.12)}}
-  @keyframes gD2{to{transform:translate3d(-7vw,7vh,0) scale(1.08)}}
-  @keyframes gD3{to{transform:translate3d(5vw,-6vh,0) scale(1.14)}}
+  /* hover 的 scale 特异性高于 a:active，这里补回按压反馈（HIG 规格 0.97） */
+  .gx:active,.gx:hover:active{scale:.97}
 }
 
 /* 液态玻璃下的文字稍微加强，保证对比度 */
 .gx{color:inherit}
 html:not([data-glass="dark"]) .gx{text-shadow:0 1px 0 rgba(255,255,255,.35)}
 html[data-glass="dark"] .gx{text-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+/* ===========================================================
+   无障碍材质变体（HIG）
+   - 降低透明度偏好 → 实色表面
+   - 增强对比度偏好 → 实色表面 + 明确边框
+   =========================================================== */
+@media (prefers-reduced-transparency: reduce){
+  .gx{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
+  :root{--g-bg:rgba(255,255,255,.96)}
+  html[data-glass="dark"]{--g-bg:rgba(30,30,34,.96)}
+}
+@media (prefers-contrast: more){
+  .gx{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    border-color:var(--line);
+    border-width:1.5px;
+  }
+  :root{--g-bg:rgba(255,255,255,.97)}
+  html[data-glass="dark"]{--g-bg:rgba(30,30,34,.97)}
+}
 
 /* ===========================================================
    老浏览器回退 + iOS 26 连续曲率
@@ -131,24 +113,21 @@ html[data-glass="dark"] .gx{text-shadow:0 1px 0 rgba(0,0,0,.25)}
 /* 不支持独立 scale 属性：用 transform 实现按压/悬浮反馈 */
 @supports not (scale: 1){
   .gx:hover{transform:scale(1.018)}
-  .gx:active,.gx:hover:active{transform:scale(.972)}
+  .gx:active,.gx:hover:active{transform:scale(.97)}
 }
 
 /* ===========================================================
-   手机 / 触屏性能模式
-   触屏滚动时，每个玻璃元素背后的 backdrop-filter 都要逐帧
-   重新采样模糊 —— 一页几十个 .gx（含首页全屏 .hero）是滑动
-   掉帧的最大元凶。只在真实触屏设备（无鼠标悬停 + 粗指针）上
-   关闭实时模糊，改用更不透明的表面（与不支持 backdrop-filter
-   的回退配方一致，可读性已验证）；边框 / 高光 / 投影 / 流光
-   质感全部保留。窄窗口的桌面不受影响。
+   手机 / 触屏性能档
+   玻璃只剩按钮后数量有限（每页几个），触屏保留材质但降档：
+   blur 12px + 更不透明表面 —— 既有 iOS 质感，又不会滑动掉帧
    =========================================================== */
 @media (hover:none) and (pointer:coarse){
-  :root{--g-bg:rgba(255,255,255,.88)}
-  html[data-glass="dark"]{--g-bg:rgba(32,35,44,.86)}
+  :root{--g-bg:rgba(255,255,255,.8)}
+  html[data-glass="dark"]{--g-bg:rgba(30,30,34,.78)}
   .gx{
-    -webkit-backdrop-filter:none;
-    backdrop-filter:none;
+    -webkit-backdrop-filter:blur(12px) saturate(160%);
+    backdrop-filter:blur(12px) saturate(160%);
   }
-  .gx::after{animation:none}
+  /* 触屏没有 hover 悬浮，去掉指针跟随高光的过渡负担 */
+  .gx::before{transition:none;opacity:0}
 }
