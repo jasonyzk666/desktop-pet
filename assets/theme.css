@@ -148,6 +148,11 @@ html[data-theme="dark"] .tbar .tpill{box-shadow:0 2px 10px rgba(0,0,0,.3)}
 html[data-theme="dark"] .ttoggle{box-shadow:0 2px 10px rgba(0,0,0,.3)}
 .ttoggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
 .ttoggle:active{transform:scale(.93)}
+/* 奶龙入侵主题下深浅色被锁定（nailong.js 置 disabled） */
+.ttoggle:disabled{
+  opacity:.45;cursor:not-allowed;transform:none;
+}
+.ttoggle:disabled:hover{border-color:var(--line);color:var(--tx)}
 .ttoggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* 触摸命中区补足到 44×44（视觉尺寸不变）——WCAG 2.5.5 / iOS HIG */
 .ttoggle{position:relative}

@@ -136,7 +136,8 @@
     var t = e.target;
     if(!t || !t.closest) return;
     var b = t.closest('.ttoggle');
-    if(!b || typeof b._flip !== 'function') return;
+    /* disabled：奶龙入侵主题下深浅色锁定，按钮不可用 */
+    if(!b || b.disabled || typeof b._flip !== 'function') return;
     var now = Date.now();
     if(now - last < 260) { e.stopPropagation(); return; }   // 连点：吃掉，避免来回抵消
     last = now;
@@ -153,6 +154,7 @@
   document.addEventListener('pointerup', function(e){
     if(!downOn) return;
     var d = downOn; downOn = null;
+    if(d.b.disabled) return;                          // 深浅色锁定中：不响应
     var inside = (e.target && e.target.closest) ? (e.target.closest('.ttoggle') === d.b) : false;
     if(inside) return;                                   // 浏览器会派发 click，交给上面的处理器
     var dx = e.clientX - d.x, dy = e.clientY - d.y;

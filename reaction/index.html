@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){try{if(localStorage.getItem("jz-nailong")==="1")document.documentElement.setAttribute("data-nailong","on")}catch(e){}})();</script>
 <title>极速反应 · 网页小游戏 · jasonyzk</title>
 <link rel="icon" type="image/png" href="/assets/icons/pet.png">
 <meta name="theme-color" content="#fbfbf9">
@@ -110,11 +111,12 @@ h1{font-size:clamp(26px,5.4vw,40px);font-weight:700;letter-spacing:1px}
   .rules{padding:16px 18px}
 }
 </style>
-<link rel="stylesheet" href="../assets/motion.css?v=20261106">
-<link rel="stylesheet" href="../assets/theme.css?v=20261106">
+<link rel="stylesheet" href="../assets/motion.css?v=20261107">
+<link rel="stylesheet" href="../assets/theme.css?v=20261107">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="../assets/glass.css?v=20261106">
+<link rel="stylesheet" href="../assets/glass.css?v=20261107">
+<link rel="stylesheet" href="../assets/nailong.css?v=20261107">
 </head>
 <body>
 
@@ -162,9 +164,10 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   </div>
 </div>
 
-<script src="../assets/theme.js?v=20261106" defer></script>
-<script src="../assets/motion.js?v=20261106" defer></script>
-<script src="../assets/glass.js?v=20261106" defer></script>
+<script src="../assets/theme.js?v=20261107" defer></script>
+<script src="../assets/motion.js?v=20261107" defer></script>
+<script src="../assets/glass.js?v=20261107" defer></script>
+<script src="../assets/nailong.js?v=20261107" defer></script>
 <script>
 (function(){
   var TOTAL = 5, PENALTY = 400;

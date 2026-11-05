@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{if(localStorage.getItem("jz-nailong")==="1")document.documentElement.setAttribute("data-nailong","on")}catch(e){}})();</script>
 <title>桌面宠物 · jasonyzk</title>
 <link rel="icon" type="image/png" href="/pet/assets/app_icon.png">
 <meta name="theme-color" content="#0a0a0f">
@@ -350,11 +351,12 @@
   .portal-back{position:fixed;top:14px;left:12px;z-index:500;color:var(--tx2);text-decoration:none;font-family:ui-monospace,Consolas,monospace;font-size:13px;transition:color .2s;padding:9px 10px;min-height:34px;display:inline-flex;align-items:center;border-radius:10px}
   .portal-back:hover{color:var(--tx)}
 </style>
-<link rel="stylesheet" href="../assets/motion.css?v=20261106">
-<link rel="stylesheet" href="../assets/theme.css?v=20261106">
+<link rel="stylesheet" href="../assets/motion.css?v=20261107">
+<link rel="stylesheet" href="../assets/theme.css?v=20261107">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="../assets/glass.css?v=20261106">
+<link rel="stylesheet" href="../assets/glass.css?v=20261107">
+<link rel="stylesheet" href="../assets/nailong.css?v=20261107">
 </head>
 <body>
 
@@ -643,8 +645,9 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   </script>
 
 
-<script src="../assets/theme.js?v=20261106" defer></script>
-<script src="../assets/motion.js?v=20261106" defer></script>
-<script src="../assets/glass.js?v=20261106" defer></script>
+<script src="../assets/theme.js?v=20261107" defer></script>
+<script src="../assets/motion.js?v=20261107" defer></script>
+<script src="../assets/glass.js?v=20261107" defer></script>
+<script src="../assets/nailong.js?v=20261107" defer></script>
 </body>
 </html>

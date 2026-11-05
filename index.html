@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function(){try{if(localStorage.getItem("jz-nailong")==="1")document.documentElement.setAttribute("data-nailong","on")}catch(e){}})();</script>
 <title>jasonyzk · 在线工具站</title>
-<meta name="description" content="jasonyzk 的作品与工具集合：桌面宠物、安卓工具、网页演示，以及极速反应、贪吃蛇两个网页小游戏和奶龙入侵趣味互动。">
+<meta name="description" content="jasonyzk 的作品与工具集合：桌面宠物、安卓工具、网页演示，以及极速反应、贪吃蛇两个网页小游戏和奶龙入侵全站主题。">
 <meta name="theme-color" content="#fbfbf9">
 <link rel="canonical" href="https://jasonyzk.top/">
 <link rel="icon" type="image/png" href="/assets/icons/pet.png">
@@ -133,11 +134,12 @@ body.dragging,body.dragging *{cursor:grabbing !important;user-select:none}
   .pills .ttoggle svg{width:15px;height:15px}
 }
 </style>
-<link rel="stylesheet" href="assets/motion.css?v=20261106">
-<link rel="stylesheet" href="assets/theme.css?v=20261106">
+<link rel="stylesheet" href="assets/motion.css?v=20261107">
+<link rel="stylesheet" href="assets/theme.css?v=20261107">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="assets/glass.css?v=20261106">
+<link rel="stylesheet" href="assets/glass.css?v=20261107">
+<link rel="stylesheet" href="assets/nailong.css?v=20261107">
 </head>
 <body>
 
@@ -224,13 +226,13 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
       <p>经典街机重制：方向键或手指滑动都能玩，吃满屏拿金豆，还能开穿墙模式。画面跟随深浅主题自动变色。</p>
     </a>
 
-    <a class="card" data-reveal data-delay="270" href="nailong/">
+    <button class="card" id="nlCard" type="button" data-reveal data-delay="270" aria-pressed="false" style="font:inherit;text-align:center;cursor:pointer">
       <span class="ic ic-amber">
         <img src="assets/nailong/2d-07.png" alt="奶龙图标">
       </span>
       <h3>奶龙入侵</h3>
-      <p>奶龙表情包大举入侵你的屏幕！点一只驱逐一只，它们会越来越多越来越快。29 只官方贴纸奶龙等你清场。</p>
-    </a>
+      <p>点一下，几百只奶龙表情包立刻占领全站背景！主题开关在左上角，随时迎接或送走这场入侵。</p>
+    </button>
 
   </div>
 </section>
@@ -364,8 +366,9 @@ tick();setInterval(tick,1000);
   }
 })();
 </script>
-<script src="assets/theme.js?v=20261106" defer></script>
-<script src="assets/motion.js?v=20261106" defer></script>
-<script src="assets/glass.js?v=20261106" defer></script>
+<script src="assets/theme.js?v=20261107" defer></script>
+<script src="assets/motion.js?v=20261107" defer></script>
+<script src="assets/glass.js?v=20261107" defer></script>
+<script src="assets/nailong.js?v=20261107" defer></script>
 </body>
 </html>
