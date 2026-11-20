@@ -192,3 +192,99 @@ html[data-theme="dark"] .ic-rose{color:#ff7a9c}
   width:0 !important;
   height:0 !important;
 }
+
+/* ===========================================================
+   10. 按钮系统强制统一（Apple HIG · 圆角边按钮）
+   -----------------------------------------------------------
+   归一化不生效的根因：各页内联 <style> 与 about.js 运行时注入
+   的 <style> 优先级/加载顺序更高，盖住了本文件的基础规则。
+   本节用 !important 收口：同类按钮全站一个形状、一个尺寸、
+   一套颜色、一套交互态。改按钮只需改这一段。
+   - 圆角：--btn-radius 16px（squircle 连续曲率）
+   - 高度：--btn-h 44px（Apple HIG 最小触控）
+   - 主色：--btn-fill 站点操作蓝（白字深浅对比均 ≥5.9:1）
+   =========================================================== */
+:root{
+  --btn-radius:16px;
+  --btn-h:44px;
+  --btn-fill:var(--blue-solid);
+}
+
+/* 10a. 操作按钮：形状 + 尺寸 + 排版强制统一 */
+.btn,.link-btn,.dl-item,.opt,.res,.abtnx,.dgo,
+a.gx,b.gx,button.gx{
+  box-sizing:border-box !important;
+  border-radius:var(--btn-radius) !important;
+  min-height:var(--btn-h) !important;
+  font-family:var(--font-ui) !important;
+  font-size:15px !important;
+  font-weight:600 !important;
+  line-height:1.45 !important;
+  border-width:1px !important;
+  border-style:solid !important;
+  text-align:center;
+}
+/* 苹果连续曲率：支持的浏览器把 16px 圆角升级为 squircle */
+@supports (corner-shape:squircle){
+  .btn,.link-btn,.dl-item,.opt,.abtnx,.dgo,
+  a.gx,b.gx,button.gx{corner-shape:squircle !important}
+}
+
+/* 10b. 主按钮统一色：覆盖散落的蓝/绿/琥珀/紫 */
+.btn.primary,.btn.amber,.gx.btn.primary,.gx.btn.amber,.abtnx,.dgo{
+  background-color:var(--btn-fill) !important;            /* 老浏览器兜底：实色 */
+  background-color:color-mix(in srgb, var(--btn-fill) 92%, transparent) !important;
+  border-color:var(--btn-fill) !important;
+  color:#fff !important;
+  text-shadow:none !important;
+}
+
+/* 10c. 次按钮统一色：表面 + 1px 语义描边 + 主文字 */
+.btn:not(.primary):not(.amber),.link-btn,.dl-item,.opt,.res{
+  background-color:var(--surface) !important;
+  border-color:var(--line) !important;
+  color:var(--tx) !important;
+}
+
+/* 10d. 交互态统一：hover 提亮、按下回弹、焦点环 */
+.btn:hover,.link-btn:hover,.dl-item:hover,.opt:hover,
+.abtnx:hover,.dgo:hover{filter:brightness(1.06) !important}
+.btn:active,.link-btn:active,.dl-item:active,.opt:active,
+.abtnx:active,.dgo:active{transform:scale(.97) !important}
+.btn:focus-visible,.link-btn:focus-visible,.dl-item:focus-visible,
+.opt:focus-visible,.abtnx:focus-visible,.dgo:focus-visible{
+  outline:2px solid var(--accent) !important;outline-offset:3px !important
+}
+.btn[disabled],.link-btn[disabled],.dl-item.disabled{opacity:.5;cursor:not-allowed}
+
+/* 10e. 顶栏图标按钮：尺寸/边框/底色统一（保留圆形，仅作图标按钮） */
+.atbtn,.ttoggle,.nl-toggle{
+  width:40px !important;height:40px !important;min-width:40px !important;
+  border-radius:50% !important;
+  border:1px solid var(--line) !important;
+  background:var(--surface) !important;                    /* 老浏览器兜底 */
+  background:color-mix(in srgb, var(--surface) 82%, transparent) !important;
+  color:var(--tx2) !important;
+  box-sizing:border-box !important;
+  font-size:15px !important;font-weight:600 !important;
+}
+.atbtn:hover,.ttoggle:hover:not(:disabled),.nl-toggle:hover{
+  border-color:var(--accent) !important;color:var(--accent) !important;
+}
+/* 窄屏同步收口（覆盖 about.js 注入的 30px 规则） */
+@media(max-width:560px){
+  .atbtn,.ttoggle,.nl-toggle{width:38px !important;height:38px !important;min-width:38px !important}
+}
+
+/* 10f. 带描边的胶囊"操作链接"→ 圆角矩形按钮（404 返回/反馈等）
+   注：纯导航标签（nav a）、语义 chip（.tag/.wchip）保留胶囊，不在此列 */
+.links a{
+  border-radius:var(--btn-radius) !important;
+  min-height:var(--btn-h) !important;
+  display:inline-flex !important;align-items:center !important;
+  padding:0 20px !important;
+  font-size:15px !important;font-weight:600 !important;
+  border-width:1px !important;border-color:var(--line) !important;
+  background:var(--surface) !important;color:var(--tx) !important;
+}
+.links a:hover{color:var(--tx) !important;border-color:var(--accent) !important}

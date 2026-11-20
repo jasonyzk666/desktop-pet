@@ -118,6 +118,20 @@ components:
 - 按钮最小高度 44px；次要链接视觉不变，用伪元素把点击区补到 44px
 - 交互态：`transform: scale(0.97)` 按下反馈、`:focus-visible` 焦点环 2px、时长 180ms
 
+**按钮系统是唯一且强制的**（`design.css` 第 10 节收口层）：
+
+| 类别 | 圆角 | 高度 | 颜色 | 适用 |
+|---|---|---|---|---|
+| 主按钮 `.btn.primary/.amber`、`.abtnx/.dgo` | 16px squircle | ≥44px | 操作蓝 `var(--blue-solid)` + 白字 | 开始/搜索/交卷/提交等主操作 |
+| 次按钮 `.btn`/`.link-btn`/`.dl-item`/`.opt` | 16px squircle | ≥44px | `var(--surface)` 底 + 1px `var(--line)` + `var(--tx)` 字 | 暂停/重来/下载项/选项 |
+| 描边操作链接 `.links a` | 16px | ≥44px | 同次按钮 | 404 返回/反馈 |
+| 图标按钮 `.atbtn/.ttoggle/.nl-toggle` | 50% 圆形 | 40px（命中 44） | surface 82% + 1px `var(--line)` | 顶栏账号/主题/奶龙开关 |
+| 导航/语义 chip `nav a`/`.tag`/`.wchip` | 999px 胶囊 | 内容高 | 语义色 | 步骤导航、标签、可点词块 |
+
+> ⚠️ 各页内联 `<style>` 与 `about.js` 注入样式会盖住普通规则。**不要在页面里重写按钮形状/颜色**，
+> 只写本页独有布局；所有按钮视觉改在 `design.css` 第 10 节一处改。主色用蓝不用紫，是因为
+> 深色紫强调色 `#9d92ff` 配白字对比仅 2.6:1，不达 WCAG；蓝色深浅均 ≥5.9:1。
+
 ## 5. Layout Principles
 
 - 间距基于 6/10/14/20/32pt 节奏（见 YAML `spacing`）
