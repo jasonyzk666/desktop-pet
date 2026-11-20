@@ -30,8 +30,7 @@
     /* 命中区只向上下补足 44px，不横向扩张，避免顶栏按钮密集时互相误触 */
     '.atbtn::after{content:"";position:absolute;left:0;top:50%;width:100%;height:44px;',
     'transform:translateY(-50%);border-radius:12px}',
-    '.atbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;',
-    'stroke-linecap:round;stroke-linejoin:round}',
+    '.atbtn svg{width:17px;height:17px;fill:currentColor;stroke:none}',
     '@media(max-width:560px){.atbtn{width:30px;height:30px}.atbtn svg{width:15px;height:15px}}',
     /* 遮罩 / 卡片 */
     '.amask{position:fixed;inset:0;z-index:9000;background:rgba(10,14,22,.44);',
@@ -47,8 +46,7 @@
     '.acard h2 b{color:var(--accent,#2f6bff)}',
     '.acard .abio{color:var(--tx2,#5b6577);font-size:14px;line-height:1.7;margin:8px 0 16px}',
     '.acard .arow{display:flex;align-items:center;gap:9px;font-size:14px;margin:7px 0;color:var(--tx,#1a2233)}',
-    '.acard .arow svg{width:15px;height:15px;stroke:var(--tx2,#5b6577);fill:none;stroke-width:1.8;flex:none;',
-    'stroke-linecap:round;stroke-linejoin:round}',
+    '.acard .arow svg{width:15px;height:15px;fill:var(--tx2,#5b6577);stroke:none;flex:none}',
     '.acard .arow a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}',
     '.acard .arow a:hover{color:var(--accent,#2f6bff)}',
     '.acard .afile{margin:16px 0 6px;display:block;width:100%}',
@@ -118,10 +116,10 @@
     else b.addEventListener('click', function(){ openStation('#account'); });
     return b;
   }
-  var ICON_ABOUT = '<circle cx="12" cy="12" r="9"/>' +
-    '<path d="M12 11v5.2"/><circle cx="12" cy="7.6" r="1.1" fill="currentColor" stroke="none"/>';
-  var ICON_ACCOUNT = '<circle cx="12" cy="8" r="3.4"/>' +
-    '<path d="M4.8 20c.6-3.9 3.4-6 7.2-6s6.6 2.1 7.2 6"/>';
+  var ICON_ABOUT = '<circle cx="12" cy="12" r="9.2"/>' +
+    '<circle cx="12" cy="7.5" r="1.25" fill="#fff"/><rect x="10.85" y="10.3" width="2.3" height="6.5" rx="1.15" fill="#fff"/>';
+  var ICON_ACCOUNT = '<circle cx="12" cy="8.2" r="4.2"/>' +
+    '<path d="M4.4 20.4c0-3.8 3.4-6.2 7.6-6.2s7.6 2.4 7.6 6.2z"/>';
 
   /* 锚点用 .ttoggle 而不是 .tbar：theme.js 在首页把开关直接塞进 .pills
      （根本没有 .tbar），其余页面才建 .tbar（内嵌或悬浮）。以开关的父容器
@@ -154,9 +152,9 @@
       '<div class="acard">' +
         '<h2>关于 <b>jasonyzk.top</b></h2>' +
         '<p class="abio">Jason 的个人作品站：桌面宠物、安卓工具、网页小游戏，还有全站奶龙入侵主题。全部页面手写，无框架无广告。</p>' +
-        '<div class="arow"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>QQ：3821888622</div>' +
-        '<div class="arow"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg><a href="mailto:1583398311@163.com">1583398311@163.com</a></div>' +
-        '<div class="arow"><svg viewBox="0 0 24 24"><path d="M12 3v10m0 0l-3.5-3.5M12 13l3.5-3.5"/><path d="M5 17v3h14v-3"/></svg>不登录也能看，登录后才能传文件</div>' +
+        '<div class="arow"><svg viewBox="0 0 24 24"><path d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2z"/></svg>QQ：3821888622</div>' +
+        '<div class="arow"><svg viewBox="0 0 24 24"><rect x="2.6" y="5" width="18.8" height="14" rx="3"/><path d="M4.2 7.4 12 12.8l7.8-5.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></svg><a href="mailto:1583398311@163.com">1583398311@163.com</a></div>' +
+        '<div class="arow"><svg viewBox="0 0 24 24"><path d="M12 2.6 8.2 6.4l1.7 1.7L11 6.9v7.7h2V6.9l1.1 1.2 1.7-1.7z"/><path d="M5 14.6v4.2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4.2h-2v4h-10v-4z"/></svg>不登录也能看，登录后才能传文件</div>' +
         '<button type="button" class="abtnx afile" id="afileBtn">📦 给我传文件 / 登录账号</button>' +
         '<p class="afoot">© 2026 jasonyzk · 本站由 AI 协助搭建</p>' +
         '<div class="adev" id="adev">' +

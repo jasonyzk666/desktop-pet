@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!--
+  Jason 作品站 · 统一图标精灵（圆润实心风格）
+  规范：viewBox 0 0 24 24；主体用 currentColor；实心图形 + 圆角端点；
+  线宽统一 3.2，圆头圆角；单一焦点、小尺寸仍可辨。
+  用法：<svg class="ico"><use href="/assets/icons.svg#i-xxx"></use></svg>
+  颜色由 CSS color 控制，自动跟随深/浅/奶龙主题。
+-->
+
+<!-- 桌面宠物：圆润爪印 -->
+<symbol id="i-pet" viewBox="0 0 24 24">
+  <ellipse cx="12" cy="15.6" rx="5.3" ry="4.3" fill="currentColor"/>
+  <circle cx="5.9" cy="9.6" r="2.15" fill="currentColor"/>
+  <circle cx="9.9" cy="6.7" r="2.15" fill="currentColor"/>
+  <circle cx="14.1" cy="6.7" r="2.15" fill="currentColor"/>
+  <circle cx="18.1" cy="9.6" r="2.15" fill="currentColor"/>
+</symbol>
+
+<!-- 操作录制：实心摄像机 -->
+<symbol id="i-recorder" viewBox="0 0 24 24">
+  <rect x="2.6" y="6.4" width="12.8" height="11.2" rx="3" fill="currentColor"/>
+  <path d="M16.2 10.1 21 7c.7-.4 1.5.1 1.5.9v8.2c0 .8-.8 1.3-1.5.9l-4.8-3.1z" fill="currentColor"/>
+</symbol>
+
+<!-- 搜索引擎原理：实心放大镜 -->
+<symbol id="i-search" viewBox="0 0 24 24">
+  <circle cx="10.2" cy="10.2" r="6.2" fill="none" stroke="currentColor" stroke-width="3.4"/>
+  <path d="M14.8 14.8 20 20" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- 极速反应：圆润闪电 -->
+<symbol id="i-bolt" viewBox="0 0 24 24">
+  <path d="M13.6 2.4 5.3 13.2c-.4.5-.1 1.3.6 1.3h4.2l-1.1 7.1c-.1.8.9 1.2 1.4.5l8.4-11.2c.4-.5.1-1.3-.6-1.3h-4.3l1.4-6.6c.2-.8-.8-1.3-1.3-.6z" fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+</symbol>
+
+<!-- 贪吃蛇：圆头 + 圆润蛇身 -->
+<symbol id="i-snake" viewBox="0 0 24 24">
+  <path d="M3.8 18.2c0-3.6 3.1-4.6 5.7-4.6 2.3 0 3.6-1.3 3.6-3.2 0-1.7-1.3-2.9-3-2.9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="10.1" cy="7.5" r="3.25" fill="currentColor"/>
+  <circle cx="19.6" cy="17.8" r="1.7" fill="currentColor"/>
+</symbol>
+
+<!-- 下载 -->
+<symbol id="i-download" viewBox="0 0 24 24">
+  <path d="M12 3.2v10.4m0 0-3.7-3.7M12 13.6l3.7-3.7" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4.6 15.4v3.3c0 1.3 1.1 2.4 2.4 2.4h10c1.3 0 2.4-1.1 2.4-2.4v-3.3" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round"/>
+</symbol>
+
+<!-- 更新日志 / 文档（折角剪影） -->
+<symbol id="i-doc" viewBox="0 0 24 24">
+  <path d="M6 2.8h8.1L19 7.7V20a1.2 1.2 0 0 1-1.2 1.2H6A1.2 1.2 0 0 1 4.8 20V4A1.2 1.2 0 0 1 6 2.8z" fill="currentColor"/>
+  <path d="M14 2.9V7a.8.8 0 0 0 .8.8H18.9z" fill="currentColor" opacity=".55"/>
+</symbol>
+
+<!-- 联系 / 邮箱 -->
+<symbol id="i-mail" viewBox="0 0 24 24">
+  <rect x="2.6" y="5" width="18.8" height="14" rx="3" fill="currentColor"/>
+  <path d="M4 7.2 12 13l8-5.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".001"/>
+  <path d="M4.2 7.4 12 12.8l7.8-5.4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+</symbol>
+
+<!-- 账号 / 用户 -->
+<symbol id="i-user" viewBox="0 0 24 24">
+  <circle cx="12" cy="8.2" r="4.2" fill="currentColor"/>
+  <path d="M4.4 20.4c0-3.8 3.4-6.2 7.6-6.2s7.6 2.4 7.6 6.2z" fill="currentColor"/>
+</symbol>
+
+<!-- 关于 / 信息 -->
+<symbol id="i-about" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="9.2" fill="currentColor"/>
+  <circle cx="12" cy="7.6" r="1.25" fill="#fff"/>
+  <rect x="10.85" y="10.4" width="2.3" height="6.4" rx="1.15" fill="#fff"/>
+</symbol>
+
+<!-- 关闭 -->
+<symbol id="i-close" viewBox="0 0 24 24">
+  <path d="M6.2 6.2 17.8 17.8M17.8 6.2 6.2 17.8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+
+<!-- 音效开 -->
+<symbol id="i-sound-on" viewBox="0 0 24 24">
+  <path d="M4 9.4h3.6L12 5.6v12.8l-4.4-3.8H4z" fill="currentColor"/>
+  <path d="M15.4 8.6a4.8 4.8 0 0 1 0 6.8M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+</symbol>
+
+<!-- 音效关 -->
+<symbol id="i-sound-off" viewBox="0 0 24 24">
+  <path d="M4 9.4h3.6L12 5.6v12.8l-4.4-3.8H4z" fill="currentColor"/>
+  <path d="M16 9.4 21 14.6M21 9.4 16 14.6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- 主题切换（太阳/月亮通用：圆环 + 光芒） -->
+<symbol id="i-theme" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="4.4" fill="currentColor"/>
+  <path d="M12 2.4v2.6M12 19v2.6M2.4 12H5M19 12h2.6M5.2 5.2 7 7M17 17l1.8 1.8M18.8 5.2 17 7M7 17l-1.8 1.8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- 上传 / 文件 -->
+<symbol id="i-upload" viewBox="0 0 24 24">
+  <path d="M12 16.8V6.4m0 0L8.3 10.1M12 6.4l3.7 3.7" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4.6 15.4v3.3c0 1.3 1.1 2.4 2.4 2.4h10c1.3 0 2.4-1.1 2.4-2.4v-3.3" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round"/>
+</symbol>
+</svg>

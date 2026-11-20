@@ -111,3 +111,29 @@ html[data-theme="light"] body::before{display:none}
 @media (prefers-reduced-motion: reduce){
   .btn,.link-btn,.dl-item,.opt,.wchip{transition:none}
 }
+
+/* ===========================================================
+   8. 统一图标系统（圆润实心）
+   -----------------------------------------------------------
+   精灵源：assets/icons.svg（symbol sprite），一次定义全站复用。
+   所有图标用 currentColor → 自动继承父级 color，跟随深/浅/奶龙主题。
+   用法：<svg class="ico"><use href="/assets/icons.svg#i-xxx"></use></svg>
+   =========================================================== */
+.ico{
+  width:24px;height:24px;display:inline-block;
+  vertical-align:middle;flex:none;
+  fill:currentColor;             /* 圆润实心：默认填充 */
+}
+/* 项目卡图标：主色取容器强调色，与浅色底形成对比 */
+.ic-blue{color:var(--blue)}
+.ic-purple{color:#7c5cf0}
+.ic-green{color:#22a559}
+.ic-amber{color:#b45309}
+.ic-rose{color:#be123c}
+html[data-theme="dark"] .ic-blue{color:#7aa2ff}
+html[data-theme="dark"] .ic-purple{color:#a68cff}
+html[data-theme="dark"] .ic-green{color:#5fd89a}
+html[data-theme="dark"] .ic-amber{color:#f0b649}
+html[data-theme="dark"] .ic-rose{color:#ff7a9c}
+/* 项目卡的 SVG 走实心：覆盖旧的描边线性规则 */
+.card .ic .ico{width:40px;height:40px;fill:currentColor;stroke:none}

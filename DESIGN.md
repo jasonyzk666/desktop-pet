@@ -149,6 +149,27 @@ components:
 - 命中区 ≥ 44px；`prefers-reduced-motion` 关闭位移动画，`prefers-reduced-transparency` 关闭玻璃
 - 320~2560px 全宽度无横向溢出
 
+## 8.5 Icon System & Brand（图标与品牌）
+
+全站图标为**圆润实心**一套语言，一处定义、全站复用：
+
+- 精灵源：`assets/icons.svg`（`<symbol>` sprite），`viewBox="0 0 24 24"`
+- 规范：主体 `currentColor` 实心填充；圆角端点（`stroke-linecap:round`）；
+  线宽统一 3.2（必须描边的图标如放大镜）；单一焦点、24px 下可辨
+- 用法：`<svg class="ico"><use href="/assets/icons.svg#i-xxx"></use></svg>`
+  （子目录页同样用**绝对**路径 `/assets/...`；颜色由父级 `color` 控制，自动跟随主题）
+- 已有符号：`i-pet / i-recorder / i-search / i-bolt / i-snake / i-download /
+  i-doc / i-mail / i-user / i-about / i-close / i-sound-on / i-sound-off /
+  i-theme / i-upload`
+- 项目卡图标色走 `--ic-blue/purple/green/amber/rose`（theme.css 深浅各一套），
+  由 design.css 的 `.ic-*` 赋给 `color`，图标 `fill:currentColor` 继承
+
+**品牌标识**：`assets/brand.svg`（紫色圆角方糖 + 白色 J + 右上光点），
+favicon 四件套 `assets/icons/favicon-{16,32,64,256}.png` + `favicon.ico`（多尺寸）。
+所有页面 `<link rel="icon">` 用绝对路径 `/assets/brand.svg` 与 `/favicon.ico`。
+
+自包含脚本（如 `about.js`）不引外部精灵，内嵌实心 path 保持零文件依赖。
+
 ## 9. Agent Prompt Guide
 
 新增页面时，按以下顺序落地即可自动保持一致：
@@ -157,6 +178,8 @@ components:
 2. 引入共享层，顺序固定：`motion.css` → `theme.css` → `glass.css` → `nailong.css` → `design.css`
 3. 卡片用 `.card`，按钮用 `.btn`，标签用 `.tag`/`.pill`，颜色取语义变量
 4. 组件只需 `border-radius: var(--r-card|box|in|pill)` 四选一
+5. 图标用 `<svg class="ico"><use href="/assets/icons.svg#i-xxx">`，新增图标先往精灵加 `<symbol>`；
+   favicon 沿用 `/assets/brand.svg`，不要另做新标识
 
 提示词示例：
 > 按 DESIGN.md 新增一个项目展示页，用 `.card` 卡片网格、`.btn` 主按钮、语义色变量，

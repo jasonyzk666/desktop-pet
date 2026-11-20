@@ -5,11 +5,12 @@
 <script>(function(){try{var t=localStorage.getItem("jz-theme");if(t!=="dark"&&t!=="light"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}var r=document.documentElement;r.setAttribute("data-theme",t);if(t==="dark")r.setAttribute("data-glass","dark");}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){try{if(localStorage.getItem("jz-nailong")==="1")document.documentElement.setAttribute("data-nailong","on")}catch(e){}})();</script>
+  <link rel="icon" type="image/svg+xml" href="/assets/brand.svg">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <title>jasonyzk · 在线工具站</title>
 <meta name="description" content="jasonyzk 的作品与工具集合：桌面宠物、安卓工具、网页演示，以及极速反应、贪吃蛇两个网页小游戏和奶龙入侵全站主题。">
 <meta name="theme-color" content="#fbfbf9">
 <link rel="canonical" href="https://jasonyzk.top/">
-<link rel="icon" type="image/png" href="/assets/icons/pet.png">
 <link rel="apple-touch-icon" href="/assets/icons/pet.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="jasonyzk">
@@ -55,7 +56,7 @@ a{color:inherit;text-decoration:none}
   align-self:center;display:flex;flex-direction:column;align-items:center;gap:6px;
   margin-bottom:8px;cursor:pointer;border:none;background:none;color:var(--accent);
 }
-.down svg{width:22px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.down svg{width:22px;height:30px;fill:currentColor;stroke:none}
 .hero{cursor:grab}
 body.dragging,body.dragging *{cursor:grabbing !important;user-select:none}
 .down{user-select:none}
@@ -138,13 +139,13 @@ body.dragging,body.dragging *{cursor:grabbing !important;user-select:none}
   .pills .ttoggle svg{width:15px;height:15px}
 }
 </style>
-<link rel="stylesheet" href="assets/motion.css?v=20261122">
-<link rel="stylesheet" href="assets/theme.css?v=20261122">
+<link rel="stylesheet" href="assets/motion.css?v=20261123">
+<link rel="stylesheet" href="assets/theme.css?v=20261123">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="assets/glass.css?v=20261122">
-<link rel="stylesheet" href="assets/nailong.css?v=20261122">
-<link rel="stylesheet" href="assets/design.css?v=20261122">
+<link rel="stylesheet" href="assets/glass.css?v=20261123">
+<link rel="stylesheet" href="assets/nailong.css?v=20261123">
+<link rel="stylesheet" href="assets/design.css?v=20261123">
 </head>
 <body>
 
@@ -156,7 +157,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   </div>
 
   <button class="down" id="down" aria-label="下滑进入工具站">
-    <svg viewBox="0 0 22 30"><path d="M11 2v20M3.5 15.5 11 23l7.5-7.5"/></svg>
+    <svg viewBox="0 0 22 30" fill="currentColor"><rect x="9" y="2" width="4" height="15" rx="2"/><path d="M11 27a2 2 0 0 1-1.4-.6l-7-7a2 2 0 0 1 2.8-2.8L11 22.2l5.6-5.6a2 2 0 1 1 2.8 2.8l-7 7A2 2 0 0 1 11 27z"/></svg>
     <span>下滑进入</span>
   </button>
 </section>
@@ -175,18 +176,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
 
     <a class="card" data-reveal data-delay="90" href="pet/">
       <span class="ic ic-blue">
-        <svg viewBox="0 0 24 24" stroke="#2563eb" aria-hidden="true">
-          <path d="M5.9 9.9 4.6 4.2l5.8 3.4"/>
-          <path d="M18.1 9.9 19.4 4.2l-5.8 3.4"/>
-          <path d="M12 21c-4.4 0-7.8-3.1-7.8-6.9 0-3.9 3.5-7 7.8-7s7.8 3.1 7.8 7c0 3.8-3.4 6.9-7.8 6.9z"/>
-          <path d="M9.1 12.9v1.8"/>
-          <path d="M14.9 12.9v1.8"/>
-          <path d="M10.5 16.4c.6.7 1 .9 1.5.9s.9-.2 1.5-.9"/>
-          <path d="M4.3 15.2 1.7 14.6"/>
-          <path d="M5.2 17.5 1.9 18.4"/>
-          <path d="M19.7 15.2 22.3 14.6"/>
-          <path d="M18.8 17.5 22.1 18.4"/>
-        </svg>
+        <svg class="ico" aria-hidden="true"><use href="/assets/icons.svg#i-pet"></use></svg>
       </span>
       <h3>桌面宠物</h3>
       <p>写实人像桌面宠物，会自己走动、跟随鼠标、右键菜单喂饭，支持双屏与明暗主题。下载暂未开放，源码已开源。</p>
@@ -194,7 +184,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
 
     <a class="card" data-reveal data-delay="180" href="recorder/">
       <span class="ic ic-purple">
-        <svg viewBox="0 0 24 24" stroke="#7c5cf0"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><circle cx="12" cy="18" r="1.3"/></svg>
+        <svg class="ico" aria-hidden="true"><use href="/assets/icons.svg#i-recorder"></use></svg>
       </span>
       <h3>操作录制</h3>
       <p>安卓悬浮窗连招工具，录制触屏手势后可循环回放。基于 Accessibility Service 实现，免 Root，不改动系统。</p>
@@ -202,7 +192,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
 
     <a class="card" data-reveal data-delay="270" href="seo/">
       <span class="ic ic-green">
-        <svg viewBox="0 0 24 24" stroke="#22a559"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+        <svg class="ico" aria-hidden="true"><use href="/assets/icons.svg#i-search"></use></svg>
       </span>
       <h3>搜索引擎原理</h3>
       <p>面向初一学生的信息技术教学演示，把爬虫抓取、建立索引到结果排序的整个过程一步步讲清楚。</p>
@@ -210,9 +200,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
 
     <a class="card" data-reveal data-delay="90" href="reaction/">
       <span class="ic ic-amber">
-        <svg viewBox="0 0 24 24" stroke="#b45309" aria-hidden="true">
-          <path d="M13.5 2 5 13.5h5.2L9.4 22 18 10.5h-5.2z"/>
-        </svg>
+        <svg class="ico" aria-hidden="true"><use href="/assets/icons.svg#i-bolt"></use></svg>
       </span>
       <h3>极速反应</h3>
       <p>网页小游戏：屏幕变绿就出手，5 轮测出真实反应速度。第 3 轮起还有黄色假灯陷阱，最高纪录保存在本地。</p>
@@ -220,12 +208,7 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
 
     <a class="card" data-reveal data-delay="180" href="snake/">
       <span class="ic ic-rose">
-        <svg viewBox="0 0 24 24" stroke="#be123c" aria-hidden="true">
-          <path d="M4 17.5c0-2.5 2-3.5 4-3.5s3-1.5 3-3.5-1.5-3.5-3.5-3.5S4 8.5 4 6.5"/>
-          <path d="M11 17.5h6"/>
-          <path d="M17 17.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 1 0 0-5"/>
-          <circle cx="18.6" cy="9.6" r=".9" fill="currentColor" stroke="none"/>
-        </svg>
+        <svg class="ico" aria-hidden="true"><use href="/assets/icons.svg#i-snake"></use></svg>
       </span>
       <h3>贪吃蛇</h3>
       <p>经典街机重制：方向键或手指滑动都能玩，吃满屏拿金豆，还能开穿墙模式。画面跟随深浅主题自动变色。</p>
@@ -394,10 +377,10 @@ tick();setInterval(tick,1000);
   }
 })();
 </script>
-<script src="assets/theme.js?v=20261122" defer></script>
-<script src="assets/motion.js?v=20261122" defer></script>
-<script src="assets/glass.js?v=20261122" defer></script>
-<script src="assets/about.js?v=20261122" defer></script>
-<script src="assets/nailong.js?v=20261122" defer></script>
+<script src="assets/theme.js?v=20261123" defer></script>
+<script src="assets/motion.js?v=20261123" defer></script>
+<script src="assets/glass.js?v=20261123" defer></script>
+<script src="assets/about.js?v=20261123" defer></script>
+<script src="assets/nailong.js?v=20261123" defer></script>
 </body>
 </html>
