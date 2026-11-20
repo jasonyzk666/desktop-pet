@@ -288,3 +288,28 @@ a.gx,b.gx,button.gx{
   background:var(--surface) !important;color:var(--tx) !important;
 }
 .links a:hover{color:var(--tx) !important;border-color:var(--accent) !important}
+
+/* ===========================================================
+   11. 图标系统强制统一（圆润实心）
+   -----------------------------------------------------------
+   跟按钮同一问题：主题开关 / recorder logo 等是各页自写的描边
+   SVG，且 theme.css 的 .ttoggle svg{fill:none;stroke} 特异性更高，
+   导致「重做图标」只换到了首页卡片，顶栏那排仍是描边。
+   本节用 !important 收口：全站功能图标一律实心 currentColor。
+   注：教学页内容里的 emoji（🐢 ⚡ 🏆 等）是表达性符号，保留不动。
+   =========================================================== */
+/* 11a. 顶栏图标：描边一律转实心，尺寸与 40px 圆钮协调（17→20px） */
+.ttoggle svg,.atbtn svg{
+  fill:currentColor !important;
+  stroke:none !important;
+  stroke-width:0 !important;
+  width:20px !important;height:20px !important;
+}
+@media(max-width:560px){
+  .ttoggle svg,.atbtn svg{width:18px !important;height:18px !important}
+}
+/* 11b. recorder logo：深色下原是描边空心，统一为实心反色摄像机 */
+.logo svg{fill:var(--bg) !important;stroke:none !important}
+html[data-theme="dark"] .logo svg{fill:var(--tx) !important;stroke:none !important}
+/* 11c. 弹窗/内联图标兜底：凡带 fill=none 装饰线的功能图标，主体仍实心 */
+.acard .arow svg{fill:var(--tx2,#5b6577) !important}

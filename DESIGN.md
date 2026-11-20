@@ -178,6 +178,13 @@ components:
 - 项目卡图标色走 `--ic-blue/purple/green/amber/rose`（theme.css 深浅各一套），
   由 design.css 的 `.ic-*` 赋给 `color`，图标 `fill:currentColor` 继承
 
+**强制收口（design.css 第 11 节）**：主题开关、账号、关于、recorder logo 等是各页
+自写的内联 SVG，theme.css 的 `.ttoggle svg{fill:none;stroke:...}` 特异性更高，
+单靠精灵源换不到它们。第 11 节用 `!important` 统一：顶栏功能图标一律
+**实心 `currentColor` + 无描边**，尺寸 20px（窄屏 18px）；太阳=中心圆+8 圆角光芒、
+月亮=闭合实心月牙（源头在 theme.js）。新增功能图标若用内联 SVG，必须走这套收口，
+或直接用精灵 `<use>`。**教学页内容里的 emoji（🐢 ⚡ 🏆）是表达性符号，保留不动。**
+
 **品牌标识**：`assets/brand.svg`（紫色圆角方糖 + 白色 J + 右上光点），
 favicon 四件套 `assets/icons/favicon-{16,32,64,256}.png` + `favicon.ico`（多尺寸）。
 所有页面 `<link rel="icon">` 用绝对路径 `/assets/brand.svg` 与 `/favicon.ico`。

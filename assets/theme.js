@@ -53,10 +53,20 @@
     b.className = 'ttoggle';
     b.title = '切换深色 / 浅色模式';
     b.setAttribute('aria-label','切换深色 / 浅色模式');
+    /* 圆润实心风格：与账号/关于/项目卡一致，禁用描边线条。
+       太阳 = 中心实心圆 + 8 根圆角光芒；月亮 = 闭合实心月牙。 */
+    var ray = '<rect x="11.05" y="1.9" width="1.9" height="3.7" rx=".95"/>';
+    var sunRays = ray
+      + ray.replace('/>', ' transform="rotate(45 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(90 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(135 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(180 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(225 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(270 12 12)"/>')
+      + ray.replace('/>', ' transform="rotate(315 12 12)"/>');
     b.innerHTML =
       '<svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="4.2"/>' +
-      '<path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>' +
+      '<circle cx="12" cy="12" r="5"/>' + sunRays +
       '</svg>' +
       '<svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true">' +
       '<path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"/>' +
