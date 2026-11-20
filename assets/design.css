@@ -29,6 +29,38 @@
 }
 
 /* ===========================================================
+   0. 全站柔和彩色渐变背景
+   -----------------------------------------------------------
+   纯静态径向渐变，叠在各主题原有的纯色底 var(--bg) 之上。
+   - 低透明度色团：文字对比度保持 ≥4.5，不影响可读性
+   - 无 backdrop-filter / 无动画：滚动性能零负担，不触发触屏闪烁
+   - 只设 background-image，不动 background-color（各主题变量照常生效）
+   - 奶龙主题的背景由 nailong.css 定义，特异性更高，会自然覆盖本规则
+   =========================================================== */
+/* :root:not([data-nailong]) 限定：奶龙主题开启时让位给 nailong.css 的三色光晕 */
+:root:not([data-nailong]) body{
+  background-image:
+    radial-gradient(ellipse 75% 55% at 12% -5%, rgba(120,170,255,.26), transparent 68%),
+    radial-gradient(ellipse 65% 50% at 92% 8%,  rgba(185,150,255,.22), transparent 68%),
+    radial-gradient(ellipse 70% 50% at 50% 105%,rgba(255,180,170,.20), transparent 68%),
+    radial-gradient(ellipse 50% 40% at 30% 60%, rgba(255,220,150,.13), transparent 72%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+:root:not([data-nailong])[data-theme="dark"] body{
+  background-image:
+    radial-gradient(ellipse 75% 55% at 12% -5%, rgba(52,78,165,.34), transparent 68%),
+    radial-gradient(ellipse 65% 50% at 92% 8%,  rgba(92,55,155,.30), transparent 68%),
+    radial-gradient(ellipse 70% 50% at 50% 105%,rgba(130,58,80,.24), transparent 68%),
+    radial-gradient(ellipse 50% 40% at 30% 60%, rgba(40,100,112,.18), transparent 72%);
+}
+/* background-attachment:fixed 在 iOS Safari 会被忽略而退化为随文档滚动，
+   此处显式兜底为 scroll（渐变仍铺满视口宽度，视觉一致且不闪） */
+@supports (-webkit-touch-callout: none){
+  :root:not([data-nailong]) body{background-attachment:scroll}
+}
+
+/* ===========================================================
    1. 排版基准：全站统一字族 / 正文基准 / 标题字重
    =========================================================== */
 body{font-family:var(--font-ui);font-size:var(--fs-body);line-height:var(--lh-body)}
