@@ -111,12 +111,12 @@ canvas.playing{touch-action:none}
   .tips{padding:15px 17px}
 }
 </style>
-<link rel="stylesheet" href="../assets/motion.css?v=20261119">
-<link rel="stylesheet" href="../assets/theme.css?v=20261119">
+<link rel="stylesheet" href="../assets/motion.css?v=20261120">
+<link rel="stylesheet" href="../assets/theme.css?v=20261120">
 <script>document.documentElement.className+=' motion';
 setTimeout(function(){if(!window.__motionReady){document.documentElement.className=document.documentElement.className.replace(' motion','');}},2500);</script>
-<link rel="stylesheet" href="../assets/glass.css?v=20261119">
-<link rel="stylesheet" href="../assets/nailong.css?v=20261119">
+<link rel="stylesheet" href="../assets/glass.css?v=20261120">
+<link rel="stylesheet" href="../assets/nailong.css?v=20261120">
 </head>
 <body>
 
@@ -169,11 +169,11 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   </div>
 </div>
 
-<script src="../assets/theme.js?v=20261119" defer></script>
-<script src="../assets/motion.js?v=20261119" defer></script>
-<script src="../assets/glass.js?v=20261119" defer></script>
-<script src="../assets/about.js?v=20261119" defer></script>
-<script src="../assets/nailong.js?v=20261119" defer></script>
+<script src="../assets/theme.js?v=20261120" defer></script>
+<script src="../assets/motion.js?v=20261120" defer></script>
+<script src="../assets/glass.js?v=20261120" defer></script>
+<script src="../assets/about.js?v=20261120" defer></script>
+<script src="../assets/nailong.js?v=20261120" defer></script>
 <script>
 (function(){
   var COLS=20, ROWS=20;
@@ -240,7 +240,8 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
   function placeFood(){
     var free=[];
     for(var y=0;y<ROWS;y++) for(var x=0;x<COLS;x++){
-      if(!occupied(x,y)) free.push({x:x,y:y});
+      // 排除金豆：否则普通豆可能生成在金豆同格，while 循环里普通豆判断在前导致金豆吃不到
+      if(!occupied(x,y)&&!(gold&&gold.x===x&&gold.y===y)) free.push({x:x,y:y});
     }
     if(!free.length){ food=null; return; }
     food=free[Math.floor(Math.random()*free.length)];
@@ -371,8 +372,9 @@ setTimeout(function(){if(!window.__motionReady){document.documentElement.classNa
     // 吃到东西时本步不 pop（长度 +1）；grow 只记"额外"还要多长的节数
     if(food && nx===food.x && ny===food.y){
       score++;
-      if(score%5===0) placeGold();
       placeFood();
+      // 金豆已存在时不重置位置；每 5 分且场上无金豆才投一颗新豆
+      if(score%5===0 && !gold) placeGold();
       stepMs=Math.max(72, stepMs-4);
     }else if(gold && nx===gold.x && ny===gold.y){
       score+=5; grow+=1;            // 金豆：本步 +1，下一步再多 +1，共 +2

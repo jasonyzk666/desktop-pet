@@ -109,7 +109,10 @@
     b.setAttribute('data-kind', kind);
     b.title = label;
     b.setAttribute('aria-label', label);
-    if(kind === 'about') b.setAttribute('aria-haspopup', 'dialog');
+    if(kind === 'about'){
+      b.setAttribute('aria-haspopup', 'dialog');
+      b.setAttribute('aria-expanded', 'false');   // 随弹窗开关同步，语义与实现一致
+    }
     b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + svg + '</svg>';
     if(kind === 'about') b.addEventListener('click', openModal);
     else b.addEventListener('click', function(){ openStation('#account'); });
@@ -138,8 +141,9 @@
   })();
 
   /* ---------- 弹窗 ---------- */
-  var mask, card, devBox, devInput;
+  var mask, card, devBox, devInput, lastFocus = null, aboutBtn = null;
   function openModal(){
+    try{ lastFocus = document.activeElement; }catch(e){ lastFocus = null; }
     if(mask){ show(); return; }
     mask = document.createElement('div');
     mask.className = 'amask';
@@ -187,7 +191,13 @@
   function show(){
     if(!mask) return;
     document.addEventListener('keydown', onKey, true);
-    requestAnimationFrame(function(){ mask.classList.add('open'); });
+    aboutBtn = document.querySelector('.atbtn[data-kind="about"]');
+    if(aboutBtn) aboutBtn.setAttribute('aria-expanded','true');
+    // 先同步加 open 让遮罩可见（.amask 初始 visibility:hidden，隐藏状态下内部按钮无法聚焦）；
+    // 不放在 rAF 里——某些环境 rAF 被节流/冻结会导致遮罩一直隐藏、焦点丢失、键盘穿透。
+    // 淡入动画由 CSS transition 完成，同步加 class 不影响观感。
+    mask.classList.add('open');
+    try{ (devBox.classList.contains('on') ? devInput : mask.querySelector('#afileBtn')).focus(); }catch(e){}
   }
   function close(){
     if(!mask) return;
@@ -196,6 +206,10 @@
     devBox.classList.remove('on');
     devInput.value = '';
     jcount = 0;
+    if(aboutBtn) aboutBtn.setAttribute('aria-expanded','false');
+    // 焦点归还触发按钮：直接调用，rAF 冻结环境也能归还
+    var back = lastFocus;
+    try{ if(back && back.isConnected && back.focus) back.focus(); }catch(e){}
     setTimeout(function(){ if(mask && !mask.classList.contains('open')){ mask.remove(); mask = null; } }, reduce ? 0 : 260);
   }
   function goDev(){
@@ -208,13 +222,39 @@
     close();
   }
 
-  /* ---------- 键盘：Esc 关闭；弹窗开着时连按 5 次 J 开口令框 ---------- */
+  /* ---------- 键盘：Esc 关闭；Tab 焦点陷阱；弹窗期吞掉背景游戏/翻页按键；连按 5 次 J 开口令框 ---------- */
   var jcount = 0, jlast = 0;
   function onKey(e){
     if(!mask || !mask.classList.contains('open')) return;
-    if(e.key === 'Escape'){ e.stopPropagation(); close(); return; }
+    // Esc 永远优先：无论焦点在哪都能关
+    if(e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); close(); return; }
+    var inMask = mask.contains(e.target);
+    // 焦点跑出弹窗（背景按钮/游戏仍持有焦点）：一律吞掉并把焦点拉回，彻底杜绝穿透
+    if(!inMask){
+      e.stopPropagation();
+      if(e.key !== 'Tab') e.preventDefault();
+      try{ (devBox.classList.contains('on') ? devInput : mask.querySelector('#afileBtn')).focus(); }catch(err){}
+      return;
+    }
+    // Tab 焦点陷阱：只在弹窗内可聚焦元素间循环
+    if(e.key === 'Tab'){
+      var list = [];
+      try{
+        mask.querySelectorAll('button,input,a[href],[tabindex]:not([tabindex="-1"])').forEach(function(el){
+          if(!el.disabled && el.offsetParent !== null) list.push(el);
+        });
+      }catch(err){}
+      if(list.length){
+        var first = list[0], last = list[list.length-1];
+        if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+      return;
+    }
     if(e.target === devInput) return;       // 口令框里正常输入
     if(e.target && e.target.tagName === 'INPUT') return;
+    // 弹窗内非输入控件：阻断冒泡到背景 document（贪吃蛇 WASD/P、首页空格翻页等）
+    e.stopPropagation();
     var now = Date.now();
     if(e.key === 'j' || e.key === 'J'){
       if(now - jlast > 1600) jcount = 0;
