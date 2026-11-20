@@ -1,0 +1,113 @@
+/* ===========================================================
+   DESIGN SYSTEM · 全站 UI 归一化层
+   -----------------------------------------------------------
+   加载顺序：必须在 theme.css / glass.css / nailong.css 之后。
+   职责：统一圆角、边框、阴影、字号、字族、命中区与动效时长。
+   原则：只改「形状 / 尺寸 / 排版」，不写死任何颜色。
+        所有颜色继续走 theme.css 的语义变量，深浅/奶龙主题自动适配。
+   规范真源：仓库根目录 DESIGN.md
+   =========================================================== */
+
+:root{
+  /* ---- 圆角四级（iOS 26 连续曲率，配合 theme.css 的 corner-shape:squircle）---- */
+  --r-card:22px;    /* 大卡片 / 展示区 */
+  --r-box:16px;     /* 按钮 / 列表项 / 中等框 */
+  --r-in:12px;      /* 卡片内小框 / 图标 / 输入 */
+  --r-pill:999px;   /* 信息胶囊：时间 / 标签 / 状态 */
+
+  /* ---- 排版 ---- */
+  --font-ui:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  --fs-body:15px;
+  --lh-body:1.75;
+
+  /* ---- 控件 ---- */
+  --hit:44px;       /* 最小点击目标（Apple HIG） */
+  --bw:1px;         /* 统一描边宽度（废弃 1.5px / 2px） */
+
+  /* ---- 阴影：废弃 seo 页的双层 --sh，统一单层 ---- */
+  --sh:var(--shadow);
+}
+
+/* ===========================================================
+   1. 排版基准：全站统一字族 / 正文基准 / 标题字重
+   =========================================================== */
+body{font-family:var(--font-ui);font-size:var(--fs-body);line-height:var(--lh-body)}
+h1,h2,h3,h4,h5,h6{font-weight:700}
+
+/* ===========================================================
+   2. 圆角归类：同类元素同形状
+   =========================================================== */
+/* 2a. 大卡片 / 展示区 → 22px */
+.card,.bigbox,.arena,.rules,.tips,.qbox{
+  border-radius:var(--r-card);
+}
+
+/* 2b. 按钮 / 列表项 / 中等框 → 16px */
+.btn,.link-btn,.dl-item,.closed,.contact-item,.feat-item,
+.opt,.res,.fnode,.sdoc,.stat div,.ditem,.detail,.phone{
+  border-radius:var(--r-box);
+}
+
+/* 2c. 卡片内小框 / 图标 / 输入 → 12px */
+.num,.tok,.dl-icon,.contact-icon,.stack span,.tblwrap,
+input[type=text],.adev input,.abtnx,.dgo,.atoast{
+  border-radius:var(--r-in);
+}
+
+/* 2d. 信息胶囊 → 999px（仅时间 / 标签 / 状态，主按钮不在此列） */
+.tag,.pill,.wchip,.round,.links a,.contact a,.contact button{
+  border-radius:var(--r-pill);
+}
+
+/* 2e. 连续曲率补齐新增的圆角类 */
+@supports (corner-shape: squircle){
+  .bigbox,.arena,.rules,.tips,.qbox,.opt,.res,.fnode,.sdoc,
+  .stat div,.ditem,.detail,.phone,.num,.tok,.dl-icon,.contact-icon,
+  .tblwrap,.round,.links a,.wchip{
+    corner-shape:squircle;
+  }
+}
+
+/* ===========================================================
+   3. 边框统一：1px，取消 1.5px / 2px 的离散描边
+   =========================================================== */
+.card,.btn,.link-btn,.dl-item,.bigbox,.arena,.qbox,.res,
+.fnode,.ditem,.wchip,.sdoc,.stat div,.opt,.note,.num,.tok,
+input[type=text],.pill,.tag,.status,.contact-item{
+  border-width:var(--bw);
+}
+
+/* ===========================================================
+   4. 阴影统一：单一柔和阴影，去掉饱和色扩散阴影
+   =========================================================== */
+.fnode.on,.sdoc.scan{box-shadow:var(--shadow)}
+
+/* ===========================================================
+   5. SEO 教学页：去掉与全站冲突的蓝色光晕，保留语义色 token
+   =========================================================== */
+body::before{display:none}
+nav{backdrop-filter:none;-webkit-backdrop-filter:none}
+html[data-theme="light"] body::before{display:none}
+/* 教学页保留蓝/琥珀/绿/红的语义色，仅把「容器描边」归一到 1px */
+
+/* ===========================================================
+   6. 命中区：次要链接/按钮视觉不变，点击区补到 44px
+   =========================================================== */
+.back,.portal-back,.nav-back,.links a,nav a,.wchip,.down,.modal-close{
+  position:relative;
+}
+.back::after,.portal-back::after,.nav-back::after,
+.links a::after,nav a::after,.wchip::after,.down::after,.modal-close::after{
+  content:"";position:absolute;left:0;right:0;top:50%;
+  height:var(--hit);transform:translateY(-50%);
+}
+
+/* ===========================================================
+   7. 动效基准：统一 180ms / ease-out，尊重降低动效偏好
+   =========================================================== */
+.btn,.link-btn,.dl-item,.contact-item,.feat-item,.opt,.wchip,.back,.portal-back{
+  transition-duration:.18s;
+}
+@media (prefers-reduced-motion: reduce){
+  .btn,.link-btn,.dl-item,.opt,.wchip{transition:none}
+}
