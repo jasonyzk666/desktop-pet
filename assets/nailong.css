@@ -146,3 +146,16 @@ html[data-nailong="on"] .nl-toggle img{animation:nlFaceWig 2.4s ease-in-out infi
 @media (max-height:480px) and (orientation:landscape){
   .nl-toggle{top:8px;left:10px}
 }
+
+/* 触屏滚动性能：左上角奶龙开关 fixed + backdrop-filter 每帧重采样背景会闪，
+   触屏下降档为高不透明实色（与 glass.css / theme.css 触屏档一致） */
+@media (hover:none) and (pointer:coarse){
+  .nl-toggle{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:color-mix(in srgb, var(--surface) 96%, transparent);
+  }
+  html[data-theme="dark"] .nl-toggle{
+    background:color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+}

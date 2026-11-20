@@ -290,3 +290,23 @@ html[data-theme="dark"] .btn.primary{background:#3b5bdb;border-color:#3b5bdb;col
 html[data-theme="dark"] .btn.amber{background:#a16207;border-color:#a16207;color:#fff}
 html[data-theme="dark"] .btn.primary:hover,
 html[data-theme="dark"] .btn.amber:hover{filter:brightness(1.1)}
+
+/* ===========================================================
+   触屏滚动性能：顶栏 fixed + backdrop-filter 每帧重采样背景，
+   手指滑动时会闪/掉帧。触屏下降档为高不透明实色，消除实时模糊。
+   玻璃质感只在 hover 精确的桌面端保留（与 glass.css 触屏档一致）。
+   =========================================================== */
+@media (hover:none) and (pointer:coarse){
+  .tbar .tpill,
+  .ttoggle,
+  .pills .ttoggle{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:color-mix(in srgb, var(--surface) 96%, transparent);
+  }
+  html[data-theme="dark"] .tbar .tpill,
+  html[data-theme="dark"] .ttoggle,
+  html[data-theme="dark"] .pills .ttoggle{
+    background:color-mix(in srgb, var(--surface) 94%, transparent);
+  }
+}
