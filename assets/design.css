@@ -173,3 +173,22 @@ html[data-theme="dark"] .ic-amber{color:#f0b649}
 html[data-theme="dark"] .ic-rose{color:#ff7a9c}
 /* 项目卡的 SVG 走实心：覆盖旧的描边线性规则 */
 .card .ic .ico{width:40px;height:40px;fill:currentColor;stroke:none}
+
+/* ===========================================================
+   9. 全站隐藏滚动条（滚动功能保留）
+   -----------------------------------------------------------
+   - Firefox：scrollbar-width:none
+   - IE / 旧 Edge：-ms-overflow-style:none
+   - Chrome / Safari / Edge：::-webkit-scrollbar{display:none}
+   - 用 !important 覆盖 pet 页 .modal 的自定义 8px 滚动条规则
+   - 只隐藏「可视滚动条」；滚轮 / 触摸 / 键盘滚动完全不受影响
+   =========================================================== */
+*,*::before,*::after{
+  scrollbar-width:none !important;       /* Firefox */
+  -ms-overflow-style:none !important;    /* IE / 旧 Edge */
+}
+*::-webkit-scrollbar{
+  display:none !important;               /* Chromium / Safari */
+  width:0 !important;
+  height:0 !important;
+}
