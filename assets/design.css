@@ -81,6 +81,10 @@ input[type=text],.pill,.tag,.status,.contact-item{
    4. 阴影统一：单一柔和阴影，去掉饱和色扩散阴影
    =========================================================== */
 .fnode.on,.sdoc.scan{box-shadow:var(--shadow)}
+/* --sh 曾在 theme.css 的 html[data-theme="dark"] 下定义为双层阴影
+   （特异性 0,1,1），覆盖本文件 :root 的单层归一化。用 :root[data-theme]
+   （特异性 0,2,0）统一收回，让 seo 页的三处 var(--sh) 真正跟随单层规范。 */
+:root[data-theme]{--sh:var(--shadow)}
 
 /* ===========================================================
    5. SEO 教学页：去掉与全站冲突的蓝色光晕，保留语义色 token
